@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join St. Bernadette Church</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Montserrat:wght@300;400;500;600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #2D3142;
+            --accent: #BF9D7E;
+            --light: #F9F8F6;
+            --dark: #1D1D21;
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 100vh;
+        }
+        
+        .visual-section {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .visual-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(45, 49, 66, 0.7) 0%, rgba(45, 49, 66, 0.3) 100%);
+            z-index: 1;
+        }
+        
+        .church-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: saturate(0.9);
+            transition: var(--transition);
+        }
+        
+        .form-section {
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .logo {
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo svg {
+            width: 40px;
+            height: 40px;
+            margin-right: 12px;
+        }
+        
+        .logo-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--primary);
+        }
+        
+        h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            font-weight: 500;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        p.intro {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 2rem;
+            max-width: 90%;
+        }
+        
+        .form-container {
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .input-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        label {
+            position: absolute;
+            left: 0;
+            top: 10px;
+            font-size: 0.85rem;
+            transition: var(--transition);
+            pointer-events: none;
+            color: #888;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 0;
+            font-size: 1rem;
+            border: none;
+            border-bottom: 1px solid #ddd;
+            background-color: transparent;
+            transition: var(--transition);
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-bottom: 1px solid var(--accent);
+        }
+        
+        input:focus + label,
+        input:not(:placeholder-shown) + label,
+        select:focus + label,
+        select:not([value=""]):valid + label,
+        textarea:focus + label,
+        textarea:not(:placeholder-shown) + label {
+            top: -20px;
+            font-size: 0.75rem;
+            color: var(--accent);
+        }
+        
+        ::placeholder {
+            color: transparent;
+        }
+        
+        select {
+            appearance: none;
+            cursor: pointer;
+        }
+        
+        .select-wrapper {
+            position: relative;
+        }
+        
+        .select-wrapper::after {
+            content: "⌄";
+            position: absolute;
+            right: 0;
+            top: 10px;
+            color: #888;
+            font-size: 1.2rem;
+            pointer-events: none;
+        }
+        
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: var(--transition);
+        }
+        
+        button:hover::before {
+            left: 100%;
+        }
+        
+        button:hover {
+            background-color: #232635;
+        }
+        
+        .form-options {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .option-btn {
+            background: none;
+            border: none;
+            padding: 0;
+            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            color: #888;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+        
+        .option-btn.active {
+            color: var(--primary);
+            font-weight: 500;
+        }
+        
+        .option-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--accent);
+        }
+        
+        .form-section {
+            position: relative;
+        }
+        
+        .status-message {
+            position: absolute;
+            bottom: 2rem;
+            left: 3rem;
+            display: flex;
+            align-items: center;
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .status-message.visible {
+            opacity: 1;
+        }
+        
+        .status-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+        
+        .inspirational-quote {
+            position: absolute;
+            bottom: 3rem;
+            left: 3rem;
+            max-width: 80%;
+            color: white;
+            z-index: 2;
+            font-family: 'Cormorant Garamond', serif;
+        }
+        
+        .quote-text {
+            font-size: 1.8rem;
+            line-height: 1.4;
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+        
+        .quote-author {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+        
+        .back-to-site {
+            position: absolute;
+            top: 2rem;
+            right: 3rem;
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #555;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .back-to-site:hover {
+            color: var(--primary);
+        }
+        
+        .back-to-site svg {
+            margin-right: 8px;
+        }
+        
+        .visual-indicator {
+            position: absolute;
+            top: 2rem;
+            left: 3rem;
+            z-index: 2;
+            display: flex;
+            gap: 8px;
+        }
+        
+        .indicator-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.4);
+        }
+        
+        .indicator-dot.active {
+            background-color: white;
+        }
+        
+        /* Animation classes */
+        .fade-in {
+            animation: fadeIn 1s ease forwards;
+        }
+        
+        .slide-up {
+            animation: slideUp 0.8s ease forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .visual-section {
+                display: none;
+            }
+            
+            .form-section {
+                padding: 2rem;
+            }
+            
+            .back-to-site {
+                top: 1rem;
+                right: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="visual-section">
+            <div class="visual-overlay"></div>
+            <img src="./images/Fathergovernor.jpg" alt="St. Bernadette Church" class="church-image">
+            
+            <div class="visual-indicator">
+                <div class="indicator-dot active"></div>
+                <div class="indicator-dot"></div>
+                <div class="indicator-dot"></div>
+            </div>
+            
+            <div class="inspirational-quote fade-in">
+                <p class="quote-text">"Faith is to believe what you do not see; the reward of this faith is to see what you believe."</p>
+                <p class="quote-author">— St. Augustine</p>
+            </div>
+        </div>
+        
+        <div class="form-section">
+            <a href="index.html" class="back-to-site">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Back to website
+            </a>
+            
+            <div class="logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#BF9D7E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                </svg>
+                <span class="logo-text">St. Bernadette Church</span>
+            </div>
+            
+            <h1 class="slide-up">Join Our Community</h1>
+            <p class="intro slide-up">Become a part of our growing parish family. Join us in worship, service, and fellowship as we journey together in faith.</p>
+            
+            <div class="form-options">
+                <button class="option-btn active" data-form="membership">Membership</button>
+                <button class="option-btn" data-form="volunteer">Volunteer</button>
+                <button class="option-btn" data-form="events">Parish Events</button>
+            </div>
+            
+            <div class="form-container slide-up">
+                <form id="membership-form">
+                    <div class="input-group">
+                        <input type="text" id="name" placeholder=" " required>
+                        <label for="name">Full Name</label>
+                    </div>
+                    
+                    <div class="input-group">
+                        <input type="email" id="email" placeholder=" " required>
+                        <label for="email">Email Address</label>
+                    </div>
+                    
+                    <div class="input-group">
+                        <input type="tel" id="phone" placeholder=" " required>
+                        <label for="phone">Phone Number</label>
+                    </div>
+                    
+                    <div class="input-group">
+                        <input type="text" id="address" placeholder=" ">
+                        <label for="address">Address</label>
+                    </div>
+                    
+                    <div class="input-group select-wrapper">
+                        <select id="membership-type" required>
+                            <option value="" disabled selected></option>
+                            <option value="individual">Individual</option>
+                            <option value="family">Family</option>
+                            <option value="youth">Youth</option>
+                            <option value="senior">Senior</option>
+                        </select>
+                        <label for="membership-type">Membership Type</label>
+                    </div>
+                    
+                    <button type="submit">Join Our Parish</button>
+                </form>
+            </div>
+            
+            <div class="status-message">
+                <svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M8 12l2 2 6-6"></path>
+                </svg>
+                <span>Your information has been submitted successfully!</span>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Form switching functionality
+        document.querySelectorAll('.option-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                document.querySelectorAll('.option-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Add active class to clicked button
+                button.classList.add('active');
+                
+                // Here you would switch between different forms based on the clicked option
+                // This is a placeholder for the actual implementation
+                const formType = button.dataset.form;
+                console.log(`Switched to ${formType} form`);
+                
+                // Example form switching code:
+                // document.querySelectorAll('form').forEach(form => form.style.display = 'none');
+                // document.getElementById(`${formType}-form`).style.display = 'block';
+            });
+        });
+        
+        // Form submission handling
+        document.getElementById('membership-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Simulate form submission
+            setTimeout(() => {
+                const statusMessage = document.querySelector('.status-message');
+                statusMessage.classList.add('visible');
+                
+                // Hide the message after 5 seconds
+                setTimeout(() => {
+                    statusMessage.classList.remove('visible');
+                }, 5000);
+            }, 1000);
+        });
+        
+        // Animation for elements when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            const elements = document.querySelectorAll('.fade-in, .slide-up');
+            
+            elements.forEach((element, index) => {
+                setTimeout(() => {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+        });
+    </script>
+</body>
+</html>

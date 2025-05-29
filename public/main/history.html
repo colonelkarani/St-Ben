@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our History | St Bernadette Church</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+      <!-- NavBar Styles -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>    
+    <style>
+        :root {
+            --primary: #1a2639;
+            --secondary: #d4b483;
+            --light: #f8f4e3;
+            --dark: #102030;
+            --accent: #e2b87a;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--light);
+            color: var(--primary);
+            overflow-x: hidden;
+            /* Added a background image to demonstrate the navbar transparency */
+            background: linear-gradient(rgba(26, 38, 57, 0.7), rgba(26, 38, 57, 0.4)), url('/api/placeholder/1920/1080') center/cover;
+            background-attachment: fixed;
+            height: 200vh; /* Making the page scrollable for demo */
+        }
+        
+        /* Navbar Styles */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 1.5rem 2rem;
+            transition: all 0.4s ease;
+            will-change: transform; /* Optimization for animations */
+        }
+        
+        .navbar.scrolled {
+            background-color: var(--primary);
+            padding: 1rem 2rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        
+        .logo-icon {
+            font-size: 1.8rem;
+            color: var(--secondary);
+            margin-right: 0.8rem;
+        }
+        
+        .logo-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .nav-item {
+            position: relative;
+        }
+        
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            padding: 0 0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--secondary);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+        
+        .dropdown {
+            position: relative;
+        }
+        
+        .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        
+        .dropdown-toggle i {
+            font-size: 0.8rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 1rem);
+            left: 50%;
+            transform: translateX(-50%) scaleY(0.8);
+            min-width: 200px;
+            background-color: var(--primary);
+            border-radius: 5px;
+            padding: 1rem 0;
+            opacity: 0;
+            visibility: hidden;
+            transform-origin: top center;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .dropdown-menu::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%) rotate(45deg);
+            width: 10px;
+            height: 10px;
+            background-color: var(--primary);
+        }
+        
+        .dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) scaleY(1);
+        }
+        
+        .dropdown:hover .dropdown-toggle i {
+            transform: rotate(180deg);
+        }
+        
+        .dropdown-item {
+            display: block;
+            padding: 0.7rem 1.5rem;
+            color: white;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .dropdown-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--secondary);
+            padding-left: 1.8rem;
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* Added overlay for mobile menu */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .close-menu{
+            visibility:hidden ;
+        }
+        
+        @media (max-width: 1100px) {
+            .mobile-menu-btn {
+                display: block;
+                z-index: 1001;
+            }
+            .dropdown-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--secondary);
+            padding-left: 0.1rem;
+        }
+        .dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0%) scaleY(1);
+        }
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -280px; /* Changed from -100% to exact pixels */
+                width: 280px;
+                height: 100vh;
+                background-color: var(--primary);
+                flex-direction: column;
+                padding: 6rem 2rem 2rem;
+                gap: 1.5rem;
+                transition: right 0.4s ease;
+                z-index: 999;
+                box-shadow: -5px 0 30px rgba(0, 0, 0, 0.1);
+                overflow-y: auto; /* Added scroll for tall menus */
+            }
+            
+            .nav-links.active {
+                right: 0;
+            }
+            
+            .dropdown-menu {
+                position: static;
+                transform: none;
+                background-color: rgba(255, 255, 255, 0.05);
+                box-shadow: none;
+                padding: 0;
+                margin-top: 0.5rem;
+                max-height: 0;
+                overflow: hidden;
+                opacity: 1;
+                visibility: visible;
+                border-radius: 5px;
+                transition: max-height 0.4s ease, padding 0.4s ease;
+            }
+            
+            .dropdown-menu::before {
+                display: none;
+            }
+            
+            .dropdown.active .dropdown-menu {
+                max-height: 500px;
+                padding: 0.5rem 0;
+            }
+            
+            .dropdown-toggle {
+
+                justify-content: space-between;
+                width: 100%;
+            }
+            
+            .close-menu {
+                position: absolute;
+                top: 1.5rem;
+                right: 1.5rem;
+                background: none;
+                border: none;
+                color: white;
+                font-size: 1.2rem;
+                cursor: pointer;
+                z-index: 1001;
+                visibility: visible;
+            }
+            
+            /* Fix for dropdown link click area */
+            .dropdown-toggle {
+                pointer-events: auto;
+            }
+            
+            /* Make the chevron container clickable separately */
+            .dropdown-chevron {
+                padding: 10px;
+                margin: -10px;
+                cursor: pointer;
+            }
+        }
+
+        /* Demo content to show scrolling effect */
+        .demo-content {
+            height: 150vh;
+            padding-top: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+        }
+        
+        .demo-content h1 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+        }
+        
+        .demo-content p {
+            max-width: 600px;
+            line-height: 1.6;
+        }
+        
+    </style>
+    <style>
+        :root {
+            --primary-color: #3b5998;
+            --secondary-color: #f8f9fa;
+            --accent-color: #e9b949;
+            --text-color: #333;
+            --light-text: #f8f9fa;
+            --padding: 1rem;
+               --footer-bg: #1e2b47;
+             --footer-text: #e0e0e0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        body {
+            color: var(--text-color);
+            line-height: 1.6;
+            background-color: #fff;
+            overflow-x: hidden;
+        }
+        
+          h1, h2, h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+        }
+        
+     
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            width: 100%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(rgba(26, 38, 57, 0.7), rgba(26, 38, 57, 0.4)), url('./images/history.jpg') center/cover;
+            color: white;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='rgba(255,255,255,0.05)' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.5;
+            z-index: 1;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 0 2rem;
+        }
+        
+        .hero h2 {
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 300;
+          color: #e9b949;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            letter-spacing: 3px;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+         
+            line-height: 1.8;
+            font-weight: 300;
+        }
+        
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+         
+            z-index: 2;
+        }
+        
+        .scroll-indicator span {
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        
+        .scroll-line {
+            width: 1px;
+            height: 60px;
+            background-color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .scroll-line::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 30%;
+            background-color: var(--secondary);
+            animation: scrollDown 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes scrollDown {
+            0% {
+                transform: translateY(-100%);
+            }
+            100% {
+                transform: translateY(333%);
+            }
+        }
+        
+        .quote-section {
+            background-color: var(--secondary-color);
+            padding: 4rem 0;
+            text-align: center;
+            position: relative;
+        }
+        
+        .quote-section:before {
+            content: """;
+            position: absolute;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 8rem;
+            color: rgba(59, 89, 152, 0.1);
+            font-family: Georgia, serif;
+            line-height: 0;
+        }
+        
+        .quote {
+            font-size: 1.8rem;
+            font-style: italic;
+            max-width: 800px;
+            margin: 0 auto;
+            color: var(--primary-color);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .quote-author {
+            margin-top: 1.5rem;
+            font-size: 1.1rem;
+            color: #666;
+        }
+        
+        .timeline-section {
+            padding: 5rem 0;
+            position: relative;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            position: relative;
+            display: inline-block;
+            padding-bottom: 0.5rem;
+        }
+        
+        .section-title h2:after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background-color: var(--accent-color);
+        }
+        
+        .timeline {
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 0;
+        }
+        
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            background-color: var(--primary-color);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+        
+        .timeline-item {
+            padding: 10px 50px;
+            position: relative;
+            width: 50%;
+            margin-bottom: 3rem;
+        }
+        
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border: 4px solid var(--accent-color);
+            top: 18px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        .timeline-item.left {
+            left: 0;
+            text-align: right;
+        }
+        
+        .timeline-item.right {
+            left: 50%;
+        }
+        
+        .timeline-item.left::after {
+            right: -14px;
+        }
+        
+        .timeline-item.right::after {
+            left: -14px;
+        }
+        
+        .timeline-content {
+            padding: 1.5rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .timeline-content:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .timeline-date {
+            color: white;
+            background-color: var(--primary-color);
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .timeline-content h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            font-size: 1.4rem;
+        }
+        
+        .timeline-content p {
+            color: #666;
+            line-height: 1.8;
+        }
+        
+        .timeline-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .founding-section {
+            background-color: var(--secondary-color);
+            padding: 5rem 0;
+        }
+        
+        .founding-grid {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+        }
+        
+        .founding-image {
+            flex: 1;
+        }
+        
+        .founding-image img {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .founding-content {
+            flex: 1;
+        }
+        
+        .founding-content h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        
+        .founding-content h2:after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background-color: var(--accent-color);
+        }
+        
+        .founders-section {
+            padding: 5rem 0;
+        }
+        
+        .founders-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+        }
+        
+        .founder-card {
+            flex: 1;
+            min-width: 250px;
+            max-width: 300px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .founder-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .founder-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+        
+        .founder-info {
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .founder-info h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .founder-info h4 {
+            color: #666;
+            font-weight: normal;
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+        
+        .founder-info p {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .milestones-section {
+            background-color: var(--secondary-color);
+            padding: 5rem 0;
+        }
+        
+        .milestone-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+        }
+        
+        .milestone-card {
+            flex: 1;
+            min-width: 250px;
+            max-width: 350px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .milestone-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .milestone-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .milestone-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .milestone-card p {
+            color: #666;
+        }
+        
+        .vision-section {
+            padding: 5rem 0;
+            text-align: center;
+        }
+        
+        .vision-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .vision-content p {
+            font-size: 1.2rem;
+            color: #555;
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            padding: 0.8rem 2rem;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+        
+        .cta-button:hover {
+            background-color: var(--accent-color);
+            transform: translateY(-3px);
+        }
+        
+        .gallery-section {
+            padding: 5rem 0;
+            background-color: var(--secondary-color);
+        }
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            height: 250px;
+        }
+        
+        .gallery-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .gallery-item:hover .gallery-image {
+            transform: scale(1.1);
+        }
+        
+        .gallery-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 1rem;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .gallery-item:hover .gallery-caption {
+            transform: translateY(0);
+        }
+
+        .scroll-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: a;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .scroll-top.active {
+            opacity: 1;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate {
+            opacity: 0;
+            animation: fadeIn 1s ease forwards;
+        }
+        
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+        
+        /* Responsive styles */
+        @media (max-width: 992px) {
+            .timeline::after {
+                left: 31px;
+            }
+            
+            .timeline-item {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 25px;
+            }
+            
+            .timeline-item.left {
+                left: 0;
+                text-align: left;
+            }
+            
+            .timeline-item.right {
+                left: 0;
+            }
+            
+            .timeline-item.left::after,
+            .timeline-item.right::after {
+                left: 18px;
+            }
+            
+            .founding-grid {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 3rem 0;
+            }
+            
+            .header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .quote {
+                font-size: 1.5rem;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+            
+            .vision-content p {
+                font-size: 1.1rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .header {
+                padding: 2.5rem 0;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .quote {
+                font-size: 1.3rem;
+            }
+            
+            .timeline-content {
+                padding: 1rem;
+            }
+            
+            .timeline-image {
+                height: 150px;
+            }
+            
+            .vision-content p {
+                font-size: 1rem;
+            }
+            
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+    </style>
+     <!-- Footer Styles -->
+     <style>  
+     .FOOTER {
+   
+    line-height: 1.6;
+}
+
+/* Footer styles */
+footer {
+    background-color: var(--footer-bg);
+    color: var(--footer-text);
+    padding: 3rem 1rem;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.footer-section h3 {
+    font-size: 1.3rem;
+    margin-bottom: 1.2rem;
+    color: white;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.5rem;
+    display: inline-block;
+}
+
+.footer-section p {
+    margin-bottom: 0.7rem;
+}
+
+.footer-section ul {
+    list-style: none;
+}
+
+.footer-section ul li {
+    margin-bottom: 0.5rem;
+}
+
+.footer-section a {
+    color: var(--footer-text);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-section a:hover {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+/* Contact info */
+.fcontact-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.7rem;
+}
+
+.fcontact-info i {
+    margin-right: 0.5rem;
+    color: var(--accent);
+    width: 20px;
+    text-align: center;
+}
+
+/* Map container */
+.fmap-container {
+    width: 100%;
+    height: 200px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 1rem;
+}
+
+/* Social icons */
+.social-icons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.social-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+.social-icon:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Bottom section */
+.footer-bottom {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+}
+
+.footer-bottom p {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.developer-info {
+    margin-top: 0.5rem;
+    font-style: italic;
+    font-size: 0.85rem;
+}
+
+.developer-link {
+    color: var(--accent);
+    font-weight: 500;
+}
+
+.developer-link:hover {
+    text-decoration: underline;
+}
+
+/* Quick links grid */
+.fquick-links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+}
+
+/* Service times */
+.fservice-time {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px dotted rgba(255, 255, 255, 0.1);
+    padding-bottom: 0.5rem;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .footer-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .fquick-links {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+<body>
+<!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-church logo-icon"></i>
+                <span class="logo-text">St Bernadette</span>
+            </a>
+            
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <ul class="nav-links">
+                <button class="close-menu">
+                    <i class="fas fa-times"></i>
+                </button>
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link active">Home</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="visit.html" class="nav-link dropdown-toggle">
+                        Visit <span class="dropdown-chevron"><i class="fas fa-chevron-down"></i></span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a href="contact.html" class="dropdown-item">Contact</a>
+                        <a href="aboutus.html" class="dropdown-item">About Us</a>
+                        <a href="join.html" class="dropdown-item">Join</a>
+                        <a href="prayerrequest.html" class="dropdown-item">Prayer Request</a>
+                        <a href="history.html" class="dropdown-item">History</a>
+                        <a href="#" class="dropdown-item">Get Updates</a>
+
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="events.html" class="nav-link active">Events</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="communities.html" class="nav-link dropdown-toggle">
+                        Communities<span class="dropdown-chevron"><i class="fas fa-chevron-down"></i></span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a href="#" class="dropdown-item">Jumuiyas</a>
+                        <a href="#" class="dropdown-item">P.M.C</a>
+                        <a href="youth.html" class="dropdown-item">Youth</a>
+                        <a href="#" class="dropdown-item">CWA</a>
+                        <a href="#" class="dropdown-item">CMA</a>
+                        <a href="#" class="dropdown-item">Choir</a>
+
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="sacrament.html" class="nav-link dropdown-toggle">
+                        Sacraments <span class="dropdown-chevron"><i class="fas fa-chevron-down"></i></span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a href="baptism.html" class="dropdown-item">Baptism</a>
+                        <a href="#" class="dropdown-item">Holy Ministry</a>
+                        <a href="#" class="dropdown-item">Confirmation</a>
+                        <a href="#" class="dropdown-item">Anointing Of The Sick</a>
+                        <a href="#" class="dropdown-item">Reconciliation</a>
+                        <a href="#" class="dropdown-item">Matrimony</a>
+                        <a href="#" class="dropdown-item">Funeral Planning</a>
+                        <a href="#" class="dropdown-item">OCIA Program</a>
+                        <a href="#" class="dropdown-item">Holy Orders</a>
+
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="serve.html" class="nav-link">Serve</a>
+                </li>
+                <li class="nav-item">
+                    <a href="reflect.html" class="nav-link">Reflect</a>
+                </li>
+                <li class="nav-item">
+                    <a href="contribute.html" class="nav-link">Contribute</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <!-- Overlay for mobile menu -->
+    <div class="menu-overlay"></div>
+
+ <section class="hero">
+            <div class="hero-content">
+                <h2>Our Rich History</h2>
+                <p>Discover the inspiring journey of St Bernadette Catholic Church from its humble beginnings to where we stand today.</p>
+            </div>
+            <div class="scroll-indicator">
+                <span>Scroll</span>
+                <div class="scroll-line"></div>
+            </div>
+        </section>
+
+    <section class="quote-section">
+        <div class="container">
+            <blockquote class="quote animate">"Faith is taking the first step even when you don't see the whole staircase."</blockquote>
+            <p class="quote-author animate delay-1">Martin Luther King Jr.</p>
+        </div>
+    </section>
+
+    <section class="founding-section">
+        <div class="container">
+            <div class="founding-grid">
+                <div class="founding-image animate">
+                    <img src="./images/history2.jpg" alt="Original church building from 1952">
+                </div>
+                <div class="founding-content animate delay-1">
+                    <h2>Our Humble Beginnings</h2>
+                    <p>St Bernadette Catholic  Church was founded in 1998 by a small group of devoted families who shared a vision of creating a welcoming spiritual home for their community. In those early days, our congregation of just 23 members gathered in the living room of founding members John and Mary Collins.</p>
+                    <p>With unwavering faith and determination, these founding families pooled their resources to purchase the land where our church still stands today. The first church building was a modest wooden structure, built largely by the hands of our founding members themselves.</p>
+                    <p>Despite its humble size, the church quickly became known for its warm atmosphere and commitment to serving the community. This foundation of faith, service, and fellowship continues to guide our church family to this day.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="timeline-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Our Journey Through Time</h2>
+            </div>
+            
+            <div class="timeline">
+                <div class="timeline-item left animate">
+                    <div class="timeline-content">
+                        <span class="timeline-date">1990</span>
+                        <h3>The Founding</h3>
+                        <img src="./images/HistoryChurch.jpg" alt="Original congregation" class="timeline-image">
+                        <p>St Bernadette Catholic  Church was founded with 23 members meeting in a living room. The group purchased land and built our first small chapel.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item right animate delay-1">
+                    <div class="timeline-content">
+                        <span class="timeline-date">1992</span>
+                        <h3>Growing Community</h3>
+                        <img src="/api/placeholder/400/200" alt="Church expansion" class="timeline-image">
+                        <p>As our congregation grew to over 200 members, we expanded the original building to include additional worship space and classrooms for Sunday School.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item left animate delay-2">
+                    <div class="timeline-content">
+                        <span class="timeline-date">1995</span>
+                        <h3>New Sanctuary</h3>
+                        <img src="/api/placeholder/400/200" alt="New sanctuary construction" class="timeline-image">
+                        <p>With continued growth, we broke ground on a new larger sanctuary designed to accommodate our expanding church family and ministry needs.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item right animate delay-3">
+                    <div class="timeline-content">
+                        <span class="timeline-date">1998</span>
+                        <h3>Community Outreach</h3>
+                        <img src="/api/placeholder/400/200" alt="Community service project" class="timeline-image">
+                        <p>Established our Community Care Center to provide food, clothing, and support services to those in need throughout Blessed Hills.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item left animate">
+                    <div class="timeline-content">
+                        <span class="timeline-date">2006</span>
+                        <h3>Youth Ministry</h3>
+                        <img src="/api/placeholder/400/200" alt="Youth group" class="timeline-image">
+                        <p>Launched our dedicated youth ministry program with the construction of the Youth Activity Center, providing a space for teens to grow in faith.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item right animate delay-1">
+                    <div class="timeline-content">
+                        <span class="timeline-date">2005</span>
+                        <h3>Modern Expansion</h3>
+                        <img src="/api/placeholder/400/200" alt="Modern church building" class="timeline-image">
+                        <p>Completed a major renovation and expansion project that gave us our current sanctuary, fellowship hall, and educational facilities.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item left animate delay-2">
+                    <div class="timeline-content">
+                        <span class="timeline-date">2018</span>
+                        <h3>Digital Ministry</h3>
+                        <img src="/api/placeholder/400/200" alt="Online worship service" class="timeline-image">
+                        <p>Embraced digital ministry with live-streamed services, an active online community, and digital resources for spiritual growth.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item right animate delay-3">
+                    <div class="timeline-content">
+                        <span class="timeline-date">Today</span>
+                        <h3>Continuing Our Mission</h3>
+                        <img src="/api/placeholder/400/200" alt="Current congregation" class="timeline-image">
+                        <p>Today, we continue to grow and serve with over 1,200 members, multiple worship services, and a wide range of ministries that reach throughout our community and beyond.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="founders-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Our Founding Leaders</h2>
+            </div>
+            
+            <div class="founders-grid">
+                <div class="founder-card animate">
+                    <img src="/api/placeholder/300/300" alt="Reverend James Wilson" class="founder-image">
+                    <div class="founder-info">
+                        <h3>Father Paul Mbugua</h3>
+                        <h4>First Father (1992-2004)</h4>
+                        <p>Led our church through its formative years with wisdom and compassion, establishing many traditions we still follow today.</p>
+                    </div>
+                </div>
+                
+                <div class="founder-card animate delay-1">
+                    <img src="/api/placeholder/300/300" alt="John and Mary Collins" class="founder-image">
+                    <div class="founder-info">
+                        <h3>Isaac Kimeu</h3>
+                        <h4>Founding Members</h4>
+                        <p>Opened their home for early worship gatherings and donated the land where our church stands today.</p>
+                    </div>
+                </div>
+                
+                <div class="founder-card animate delay-2">
+                    <img src="/api/placeholder/300/300" alt="Dorothy Lancaster" class="founder-image">
+                    <div class="founder-info">
+                        <h3>Dorothy Muthoni</h3>
+                        <h4>Music Director (1952-1975)</h4>
+                        <p>Established our church's rich musical tradition and directed our first choir with passion and devotion.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="milestones-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Key Milestones</h2>
+            </div>
+            
+            <div class="milestone-cards">
+                <div class="milestone-card animate">
+                    <div class="milestone-icon">
+                        <i class="fas fa-church"></i>
+                    </div>
+                    <h3>Building & Growth</h3>
+                    <p>From our first wooden chapel to our current sanctuary that seats 800, our physical space has grown alongside our congregation.</p>
+                </div>
+                
+                <div class="milestone-card animate delay-1">
+                    <div class="milestone-icon">
+                        <i class="fas fa-hands-helping"></i>
+                    </div>
+                    <h3>Community Impact</h3>
+                    <p>Our outreach programs have served over 50,000 individuals in need through food banks, shelter assistance, and counseling services.</p>
+                </div>
+                
+                <div class="milestone-card animate delay-2">
+                    <div class="milestone-icon">
+                        <i class="fas fa-globe-americas"></i>
+                    </div>
+                    <h3>Global Missions</h3>
+                    <p>We've sponsored mission trips to 17 countries, built 23 wells in Africa, and supported countless families through global partnerships.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="gallery-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Historical Photo Gallery</h2>
+            </div>
+            
+            <div class="gallery-grid">
+                <div class="gallery-item animate">
+                    <img src="/api/placeholder/400/400" alt="Original church building" class="gallery-image">
+                    <div class="gallery-caption">Original church building, 1992</div>
+                </div>
+                
+                <div class="gallery-item animate delay-1">
+                    <img src="/api/placeholder/400/400" alt="First baptism service" class="gallery-image">
+                    <div class="gallery-caption">First baptism service, 1996</div>
+                </div>
+                
+                <div class="gallery-item animate delay-2">
+                    <img src="/api/placeholder/400/400" alt="Church picnic from the 1960s" class="gallery-image">
+                    <div class="gallery-caption">Church picnic, 2004</div>
+                </div>
+                
+                <div class="gallery-item animate delay-3">
+                    <img src="/api/placeholder/400/400" alt="Sanctuary construction" class="gallery-image">
+                    <div class="gallery-caption">Building the new sanctuary, 2009</div>
+                </div>
+                
+                <div class="gallery-item animate">
+                    <img src="/api/placeholder/400/400" alt="Christmas service" class="gallery-image">
+                    <div class="gallery-caption">Christmas candlelight service, 2013</div>
+                </div>
+                
+                <div class="gallery-item animate delay-1">
+                    <img src="/api/placeholder/400/400" alt="Youth group mission trip" class="gallery-image">
+                    <div class="gallery-caption">First youth mission trip, 2016</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="vision-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Our Continuing Journey</h2>
+            </div>
+            
+            <div class="vision-content animate">
+                <p>For over 70 years, St Bernadette Catholic Church has been a beacon of hope, faith, and love in Blessed Hills. While we honor our rich history and the foundation laid by those who came before us, we remain focused on the future.</p>
+                <p>As we look ahead, we're committed to continuing our legacy of meaningful worship, compassionate outreach, and spiritual growth while adapting to meet the needs of our changing world.</p>
+                <p>We invite you to be part of our ongoing story as we write the next chapter of St Bernadette Catholic  Church together.</p>
+                <a href="#" class="cta-button">Join Our Community</a>
+            </div>
+        </div>
+    </section>
+     <div class="FOOTER">
+        <footer>
+          <div class="footer-container">
+              <!-- About section -->
+              <div class="footer-section">
+                  <h3>About Us</h3>
+                  <p>St Bernadette Church is a welcoming and inclusive community of faith, dedicated to serving God and our neighbors in love and compassion.</p>
+                  <div class="social-icons">
+                      <a href="#" class="social-icon" aria-label="Facebook">
+                          <i class="fab fa-facebook-f"></i>
+                      </a>
+                      <a href="#" class="social-icon" aria-label="Twitter">
+                          <i class="fab fa-twitter"></i>
+                      </a>
+                      <a href="#" class="social-icon" aria-label="Instagram">
+                          <i class="fab fa-instagram"></i>
+                      </a>
+                      <a href="#" class="social-icon" aria-label="YouTube">
+                          <i class="fab fa-youtube"></i>
+                      </a>
+                  </div>
+              </div>
+              
+              <!-- Contact section -->
+              <div class="footer-section">
+                  <h3>Contact Us</h3>
+                  <div class="contact-info">
+                      <i class="fas fa-map-marker-alt"></i>
+                      <p>123 Thika, Ngoingwa, KE 90210</p>
+                  </div>
+                  <div class="fcontact-info">
+                      <i class="fas fa-phone"></i>
+                      <p>(555) 123-4567</p>
+                  </div>
+                  <div class="fcontact-info">
+                      <i class="fas fa-envelope"></i>
+                      <p>info@st bernadettechurch.org</p>
+                  </div>
+                  <div class="fmap-container">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4608.885308770074!2d37.04422395523386!3d-1.0418612240776763!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f4eb686ce02fd%3A0xb2829857532202be!2sSt%20Bernadette%20Catholic%20Church%20Ngoingwa!5e0!3m2!1sen!2ske!4v1745156036236!5m2!1sen!2ske" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                  </div>
+              </div>
+              
+              <!-- Quick Links section -->
+              <div class="footer-section">
+                  <h3>Quick Links</h3>
+                  <div class="fquick-links">
+                      <ul>
+                          <li><a href="#"><i class="fas fa-angle-right"></i> Home</a></li>
+                          <li><a href="#"><i class="fas fa-angle-right"></i> About</a></li>
+                          <li><a href="#"><i class="fas fa-angle-right"></i> Events</a></li>
+                          <li><a href="#"><i class="fas fa-angle-right"></i> Sermons</a></li>
+                      </ul>
+                      <ul>
+                          <li><a href="#"><i class="fas fa-angle-right"></i> Ministries</a></li>
+                          <li><a href="#"><i class="fas fa-angle-right"></i> Give</a></li>
+                          <li><a href="#"><i class="fas fa-angle-right"></i> Gallery</a></li>
+                          <li><a href="#"><i class="fas fa-angle-right"></i> Contact</a></li>
+                      </ul>
+                  </div>
+              </div>
+              
+              <!-- Service Times section -->
+              <div class="footer-section">
+                  <h3>Service Times</h3>
+                  <div class="service-time">
+                      <span>Sunday Morning:</span>
+                      <span>9:00 AM</span>
+                  </div>
+                  <div class="service-time">
+                      <span>Sunday Evening:</span>
+                      <span>11:00 AM</span>
+                  </div>
+                  <div class="service-time">
+                      <span>Wednesday Bible Study:</span>
+                      <span>7:00 PM</span>
+                  </div>
+                  <div class="service-time">
+                      <span>Youth Group (Friday):</span>
+                      <span>6:30 PM</span>
+                  </div>
+                  <p style="margin-top: 1rem;">Join us online or in person!</p>
+                  <a href="#" style="color: var(--accent);">View Full Schedule</a>
+              </div>
+          </div>
+          
+          <!-- Bottom section with copyright and developer info -->
+          <div class="footer-bottom">
+              <p>&copy; 2025 St Bernadette Catholic Church. All rights reserved.</p>
+              <div class="developer-info">
+                  <p>For website support: webmaster@stbernadettechurch.org</p>
+              </div>
+          </div>
+      </footer>
+      </div>
+    
+    
+    <div class="scroll-top">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Observe elements with animate class
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = 1;
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            document.querySelectorAll('.animate').forEach(el => {
+                observer.observe(el);
+            });
+            
+            // Scroll to top button
+            const scrollBtn = document.querySelector('.scroll-top');
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    scrollBtn.classList.add('active');
+                } else {
+                    scrollBtn.classList.remove('active');
+                }
+            });
+            
+            scrollBtn.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+   <!-- NavBar Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Register ScrollTrigger plugin
+            gsap.registerPlugin(ScrollTrigger);
+            
+            // Navbar scroll effect with debouncing
+            const navbar = document.querySelector('.navbar');
+            let scrollTimer;
+            
+            // Initial check on page load
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            }
+            
+            window.addEventListener('scroll', () => {
+                // Clear the previous timer
+                clearTimeout(scrollTimer);
+                
+                // Set a new timer
+                scrollTimer = setTimeout(() => {
+                    if (window.scrollY > 50) {
+                        navbar.classList.add('scrolled');
+                    } else {
+                        navbar.classList.remove('scrolled');
+                    }
+                }, 10); // Small delay for better performance
+            });
+            
+            // Navbar animations with GSAP
+            gsap.from('.navbar', {
+                y: -100,
+                opacity: 0,
+                duration: 1,
+                ease: 'power3.out',
+                delay: 0.2,
+                clearProps: 'all' // Clean up after animation
+            });
+            
+            // Mobile menu elements
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const closeMenuBtn = document.querySelector('.close-menu');
+            const navLinks = document.querySelector('.nav-links');
+            const overlay = document.querySelector('.menu-overlay');
+            const dropdowns = document.querySelectorAll('.dropdown');
+            
+            // Open mobile menu
+            mobileMenuBtn.addEventListener('click', () => {
+                navLinks.classList.add('active');
+                overlay.classList.add('active');
+                document.querySelector('.mobile-menu-btn').style.visibility = 'hidden';
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            });
+            
+            // Close mobile menu function
+            const closeMenu = () => {
+                navLinks.classList.remove('active');
+                overlay.classList.remove('active');
+                document.querySelector('.mobile-menu-btn').style.visibility = 'visible';
+                document.body.style.overflow = ''; // Re-enable scrolling
+            };
+            
+            // Close menu events
+            closeMenuBtn.addEventListener('click', closeMenu);
+            overlay.addEventListener('click', closeMenu);
+            
+            // Handle dropdowns
+            dropdowns.forEach(dropdown => {
+                const dropdownToggle = dropdown.querySelector('.dropdown-toggle');
+                const dropdownChevron = dropdown.querySelector('.dropdown-chevron');
+                
+                // Only for mobile
+                if (window.innerWidth <= 768) {
+                    // Make the main link navigate and chevron toggle dropdown
+                    dropdownChevron.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        // Close other open dropdowns
+                        dropdowns.forEach(otherDropdown => {
+                            if (otherDropdown !== dropdown && otherDropdown.classList.contains('active')) {
+                                otherDropdown.classList.remove('active');
+                            }
+                        });
+                        
+                        // Toggle current dropdown
+                        dropdown.classList.toggle('active');
+                        
+                        // Rotate chevron
+                        const icon = dropdownChevron.querySelector('i');
+                        if (dropdown.classList.contains('active')) {
+                            icon.style.transform = 'rotate(180deg)';
+                        } else {
+                            icon.style.transform = 'rotate(0)';
+                        }
+                    });
+                }
+            });
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                if (window.innerWidth > 768) {
+                    // Reset mobile menu state when switching to desktop
+                    navLinks.classList.remove('active');
+                    overlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                    
+                    // Reset all dropdowns
+                    dropdowns.forEach(dropdown => {
+                        dropdown.classList.remove('active');
+                        const icon = dropdown.querySelector('.dropdown-chevron i');
+                        if (icon) icon.style.transform = 'rotate(0)';
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

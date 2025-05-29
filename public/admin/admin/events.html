@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Church Admin Dashboard – Events</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./css/dash.css" />
+  
+</head>
+<body>
+  <nav class="navbar">
+    <a href="#" class="logo">St Bernadette Admin</a>
+    <div class="hamburger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <div class="nav-links">
+      <a href="announcements.html">Announcements</a>
+      <a href="events.html" class="active">Events</a>
+      <a href="communities.html">Communities</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="contact.html">Contact Info</a>
+      <a href="messages.html">Messages</a>
+    </div>
+  </nav>
+  <main class="main-content">
+    <h1 class="dashboard-title">Events</h1>
+
+    <!-- Modern Site Overview -->
+    <section class="site-overview" aria-label="Site Overview">
+      <div class="stat-card">
+        <h3 id="stat-announcements">0</h3>
+        <span>Total Announcements</span>
+      </div>
+      <div class="stat-card">
+        <h3 id="stat-events">0</h3>
+        <span>Upcoming Events</span>
+      </div>
+      <div class="stat-card">
+        <h3 id="stat-jumuiyas">0</h3>
+        <span>Number of Jumuiyas</span>
+      </div>
+    </section>
+
+    <!-- Events Section -->
+    <section class="section-card" aria-labelledby="events-title">
+      <h2 id="events-title">📅 Events</h2>
+      <form id="event-form" aria-label="Add new event">
+        <label for="event-title">Event Title</label>
+        <input type="text" id="event-title" placeholder="Event name" required />
+        <label for="event-date">Date</label>
+        <input type="date" id="event-date" required />
+        <label for="event-time">Time</label>
+        <input type="time" id="event-time" required />
+        <label for="event-location">Location</label>
+        <input type="text" id="event-location" placeholder="Location" required />
+        <label for="event-description">Description</label>
+        <textarea id="event-description" rows="3" placeholder="Brief description" required></textarea>
+        <button type="submit">Add Event</button>
+      </form>
+      <ul class="events-list" id="events-list" aria-live="polite" aria-relevant="all" aria-label="List of events"></ul>
+    </section>
+  </main>
+  <script>
+    // Hamburger Menu
+    const hamburger = document.querySelector('.hamburger');
+    const navLinks = document.querySelector('.nav-links');
+    hamburger.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+    });
+
+    // LocalStorage keys
+    const STORAGE_KEYS = {
+      announcements: 'church_announcements',
+      events: 'church_events',
+      jumuiyas: 'church_jumuiyas'
+    };
+
+    let announcements = JSON.parse(localStorage.getItem(STORAGE_KEYS.announcements)) || [];
+    let events = JSON.parse(localStorage.getItem(STORAGE_KEYS.events)) || [];
+    let jumuiyas = JSON.parse(localStorage.getItem(STORAGE_KEYS.jumuiyas)) || [];
+
+    // DOM elements
+    const eventsList = document.getElementById('events-list');
+    const eventForm = document.getElementById('event-form');
+    const eventTitle = document.getElementById('event-title');
+    const eventDate = document.getElementById('event-date');
+    const eventTime = document.getElementById('event-time');
+    const eventLocation = document.getElementById('event-location');
+    const eventDescription = document.getElementById('event-description');
+
+    const statAnnouncements = document.getElementById('stat-announcements');
+    const statEvents = document.getElementById('stat-events');
+    const statJumuiyas = document.getElementById('stat-jumuiyas');
+
+    function formatDate(dateStr) {
+      const options = { year: 'numeric', month: 'short', day: 'numeric' };
+      const d = new Date(dateStr);
+      return d.toLocaleDateString(undefined, options);
+    }
+
+    function formatTime(timeStr) {
+      const [hour, minute] = timeStr.split(':');
+      const date = new Date();
+      date.setHours(hour, minute);
+      return date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function renderEvents() {
+      eventsList.innerHTML = '';
+      if (events.length === 0) {
+        eventsList.innerHTML = '<li style="color:#999;font-style:italic;">No upcoming events.</li>';
+        statEvents.textContent = '0';
+        return;
+      }
+      events.forEach((event, i) => {
+        const li = document.createElement('li');
+
+        li.innerHTML = `
+          <div class="event-header">
+            <span>${event.title}</span>
+            <button title="Delete event" aria-label="Delete event ${event.title}">🗑️</button>
+          </div>
+          <div class="event-date-time">${formatDate(event.date)} @ ${formatTime(event.time)}</div>
+          <div class="event-location">${event.location}</div>
+          <div class="event-description">${event.description}</div>
+        `;
+
+        const delBtn = li.querySelector('button');
+        delBtn.onclick = () => {
+          if (confirm(`Delete event "${event.title}"?`)) {
+            events.splice(i, 1);
+            localStorage.setItem(STORAGE_KEYS.events, JSON.stringify(events));
+            renderEvents();
+          }
+        };
+
+        eventsList.appendChild(li);
+      });
+      statEvents.textContent = events.length;
+    }
+
+    eventForm.onsubmit = e => {
+      e.preventDefault();
+      const newEvent = {
+        title: eventTitle.value.trim(),
+        date: eventDate.value,
+        time: eventTime.value,
+        location: eventLocation.value.trim(),
+        description: eventDescription.value.trim()
+      };
+      if (
+        newEvent.title &&
+        newEvent.date &&
+        newEvent.time &&
+        newEvent.location &&
+        newEvent.description
+      ) {
+        events.push(newEvent);
+        localStorage.setItem(STORAGE_KEYS.events, JSON.stringify(events));
+        renderEvents();
+        eventForm.reset();
+      }
+    };
+
+    // Render overview stats
+    function renderOverview() {
+      statAnnouncements.textContent = announcements.length;
+      statEvents.textContent = events.length;
+      statJumuiyas.textContent = jumuiyas.length;
+    }
+
+    // Initial render
+    renderEvents();
+    renderOverview();
+  </script>
+</body>
+</html>

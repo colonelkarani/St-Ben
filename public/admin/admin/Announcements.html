@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Church Admin Dashboard – Announcements</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #2d3748;
+      --accent: #4fd1c5;
+      --bg: #f7fafc;
+      --card-bg: #fff;
+      --shadow: 0 4px 20px rgba(0,0,0,0.07);
+      --radius: 14px;
+      --nav-height: 60px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    nav.navbar {
+      position: sticky;
+      top: 0;
+      background: var(--card-bg);
+      box-shadow: var(--shadow);
+      height: var(--nav-height);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      z-index: 1000;
+    }
+    nav .logo {
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: var(--accent);
+      letter-spacing: 1.2px;
+      user-select: none;
+    }
+    nav .nav-links {
+      display: flex;
+      gap: 1.2rem;
+    }
+    nav .nav-links a {
+      text-decoration: none;
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.5em 0.8em;
+      border-radius: 8px;
+      transition: background 0.25s, color 0.25s;
+      user-select: none;
+    }
+    nav .nav-links a:hover,
+    nav .nav-links a.active {
+      background: var(--accent);
+      color: #222;
+    }
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      width: 26px;
+      height: 20px;
+      justify-content: space-between;
+      user-select: none;
+    }
+    .hamburger span {
+      display: block;
+      height: 3px;
+      background: var(--primary);
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+    @media (max-width: 768px) {
+      nav .nav-links {
+        position: fixed;
+        top: var(--nav-height);
+        right: 0;
+        background: var(--card-bg);
+        flex-direction: column;
+        width: 220px;
+        height: calc(100vh - var(--nav-height));
+        padding-top: 1rem;
+        box-shadow: -4px 0 12px rgba(0,0,0,0.06);
+        transform: translateX(100%);
+        transition: transform 0.35s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        overflow-y: auto;
+        align-items: flex-start;
+        padding-left: 2rem;
+      }
+      nav .nav-links.active {
+        transform: translateX(0);
+      }
+      nav .nav-links a {
+        padding: 0.75em 0;
+      }
+      .hamburger {
+        display: flex;
+      }
+    }
+    .main-content {
+      flex: 1;
+      padding: 1rem 1.5rem 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .dashboard-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      letter-spacing: -0.8px;
+      color: var(--primary);
+    }
+    .site-overview {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 0.9rem 1.4rem;
+      min-width: 130px;
+      flex: 1 1 130px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      transition: box-shadow 0.2s;
+    }
+    .stat-card h3 {
+      margin: 0 0 0.3rem 0;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.6px;
+    }
+    .stat-card span {
+      font-size: 0.9rem;
+      color: #4a5568;
+      font-weight: 600;
+    }
+    .section-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.5rem 2rem;
+      margin-bottom: 2rem;
+      max-width: 700px;
+    }
+    .section-card h2 {
+      font-size: 1.3rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+    }
+    .section-card form {
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+    }
+    .section-card label {
+      font-weight: 600;
+      color: #718096;
+      font-size: 0.97rem;
+    }
+    .section-card textarea {
+      padding: 0.7em;
+      border-radius: 8px;
+      border: 1.5px solid #e2e8f0;
+      font-size: 1rem;
+      font-family: inherit;
+      resize: vertical;
+      min-height: 60px;
+    }
+    .section-card button {
+      background: var(--accent);
+      color: #222c36;
+      border: none;
+      font-weight: 700;
+      padding: 0.7em 1.7em;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      align-self: flex-start;
+      margin-top: 0.5em;
+      transition: background 0.2s;
+    }
+    .section-card button:hover {
+      background: #38b2ac;
+    }
+    .announcements-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      border-top: 1px solid #edf2f7;
+    }
+    .announcements-list li {
+      padding: 1em 0;
+      border-bottom: 1px solid #edf2f7;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.07rem;
+    }
+    .announcements-list li:last-child {
+      border-bottom: none;
+    }
+    .announcements-list button {
+      background: none;
+      color: #e53e3e;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      margin-left: 0.7em;
+      transition: color 0.2s;
+    }
+    .announcements-list button:hover {
+      color: #c53030;
+    }
+    @media (max-width: 600px) {
+      .dashboard-title {
+        font-size: 1.5rem;
+      }
+      .site-overview {
+        flex-direction: column;
+        gap: 0.8rem;
+      }
+      .stat-card {
+        padding: 0.8rem 1.1rem;
+      }
+      .section-card {
+        padding: 1rem 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="#" class="logo">St Bernadette Admin</a>
+    <div class="hamburger" aria-label="Toggle navigation menu" role="button" tabindex="0">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <div class="nav-links">
+      <a href="announcements.html" class="active">Announcements</a>
+      <a href="events.html">Events</a>
+      <a href="communities.html">Communities</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="contact.html">Contact Info</a>
+      <a href="messages.html">Messages</a>
+    </div>
+  </nav>
+  <main class="main-content" role="main">
+    <h1 class="dashboard-title">📢 Announcements</h1>
+
+    <!-- Site Overview -->
+    <section class="site-overview" aria-label="Site Overview">
+      <div class="stat-card">
+        <h3 id="stat-announcements">0</h3>
+        <span>Total Announcements</span>
+      </div>
+      <div class="stat-card">
+        <h3 id="stat-events">0</h3>
+        <span>Upcoming Events</span>
+      </div>
+      <div class="stat-card">
+        <h3 id="stat-jumuiyas">0</h3>
+        <span>Number of Jumuiyas</span>
+      </div>
+    </section>
+
+    <!-- Announcements Section -->
+    <section class="section-card" aria-labelledby="announcements-title">
+      <h2 id="announcements-title">🧩 Announcements</h2>
+      <form id="announcement-form">
+        <label for="announcement-text">Announcement Text</label>
+        <textarea id="announcement-text" placeholder="e.g. Youth Mass this Friday at 6 PM." required></textarea>
+        <button type="submit">Add Announcement</button>
+      </form>
+      <ul class="announcements-list" id="announcements-list"></ul>
+    </section>
+  </main>
+  <script>
+    // Hamburger Menu toggle
+    const hamburger = document.querySelector('.hamburger');
+    const navLinks = document.querySelector('.nav-links');
+    hamburger.addEventListener('click', () => navLinks.classList.toggle('active'));
+    hamburger.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        navLinks.classList.toggle('active');
+      }
+    });
+
+    // Demo data persistence with localStorage (can be replaced with backend)
+    const STORAGE_KEYS = {
+      announcements: 'church_announcements',
+      events: 'church_events',
+      jumuiyas: 'church_jumuiyas'
+    };
+    let announcements = JSON.parse(localStorage.getItem(STORAGE_KEYS.announcements)) || [];
+    let events = JSON.parse(localStorage.getItem(STORAGE_KEYS.events)) || [];
+    let jumuiyas = JSON.parse(localStorage.getItem(STORAGE_KEYS.jumuiyas)) || [];
+
+    // DOM elements
+    const announcementsList = document.getElementById('announcements-list');
+    const announcementForm = document.getElementById('announcement-form');
+    const announcementText = document.getElementById('announcement-text');
+    const statAnnouncements = document.getElementById('stat-announcements');
+    const statEvents = document.getElementById('stat-events');
+    const statJumuiyas = document.getElementById('stat-jumuiyas');
+
+    function renderAnnouncements() {
+      announcementsList.innerHTML = '';
+      if (announcements.length === 0) {
+        announcementsList.innerHTML = '<li style="color:#999;font-style:italic;">No announcements yet.</li>';
+        statAnnouncements.textContent = '0';
+        return;
+      }
+      announcements.forEach((a, i) => {
+        const li = document.createElement('li');
+        li.textContent = a.text;
+        const delBtn = document.createElement('button');
+        delBtn.title = 'Delete announcement';
+        delBtn.textContent = '🗑️';
+        delBtn.onclick = () => {
+          if (confirm('Delete this announcement?')) {
+            announcements.splice(i, 1);
+            localStorage.setItem(STORAGE_KEYS.announcements, JSON.stringify(announcements));
+            renderAnnouncements();
+          }
+        };
+        li.appendChild(delBtn);
+        announcementsList.appendChild(li);
+      });
+      statAnnouncements.textContent = announcements.length;
+    }
+
+    announcementForm.onsubmit = e => {
+      e.preventDefault();
+      const text = announcementText.value.trim();
+      if (text) {
+        announcements.push({ text });
+        localStorage.setItem(STORAGE_KEYS.announcements, JSON.stringify(announcements));
+        renderAnnouncements();
+        announcementForm.reset();
+      }
+    };
+
+    // Initial render
+    renderAnnouncements();
+    statAnnouncements.textContent = announcements.length;
+    statEvents.textContent = events.length;
+    statJumuiyas.textContent = jumuiyas.length;
+  </script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif; 
+}
+body{
+    background: #ce5d5db1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-image: url('../images/5.jpg');
+    background-size: cover;
+    background-position: bottom;
+}
+.wrapper{
+    width: 70%;
+    max-width: 400px;
+    min-width: 280px;
+    background: transparent;
+    color: #fff;
+    position:relative;
+    border: #524343 1px solid;
+    border-radius: 20px;
+    padding: 50px;
+}
+.wrapper h1{
+    text-align: center;
+    font-size: 30px;
+}
+.wrapper .input-box{
+    width: 100%;
+    height: 50px;
+    margin: 20px 0;
+    background: transparent;
+    position: relative;
+    border-radius: 20px;
+}
+.input-box:hover{
+    background: #ffffff48;
+    transition: 0.3s ease;
+}
+.input-box input{
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    outline: none;
+    border: 2px solid #524343;
+    border-radius: 20px;
+    font-size: 16px;
+    color: #fff;
+    padding: 20px 45px 20px 20px;
+}
+
+.input-box input::placeholder{
+    color: #fff;
+}
+.input-box i {
+    position: absolute;
+    right: 5%;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: large;  
+}
+.btn{
+    display: block;
+    margin: 20px auto 0 auto;
+    width: 50%;
+    min-width: 120px;
+    height: 50px;
+    background: #524343;
+    border-radius: 20px;
+    border: none;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+}
+.btn:hover{
+    background: #a27979;
+    transition: 0.3s ease;
+}
+
+/* Responsive styles */
+@media (max-width: 600px) {
+    .wrapper {
+        width: 95%;
+        max-width: 100%;
+        min-width: unset;
+        padding: 20px 10px;
+    }
+    .wrapper h1 {
+        font-size: 22px;
+    }
+    .btn {
+        width: 100%;
+        min-width: unset;
+        font-size: 16px;
+        height: 45px;
+    }
+    .input-box input {
+        font-size: 14px;
+        padding: 15px 40px 15px 15px;
+    }
+}

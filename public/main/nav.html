@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>St Ben's Enhanced Navigation Bar</title>
+    <style>
+        /* Reset and base */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f9f9f9;
+            color: #fff;
+        }
+
+        /* Hero section to demonstrate scrolling */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                        url("https://source.unsplash.com/random/1920x1080/?church") no-repeat center center;
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin-bottom: 2rem;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+
+        /* Content sections for scrolling */
+        .section {
+            min-height: 100vh;
+            padding: 80px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .dark-section {
+            background-color: #121212;
+            color: #fff;
+        }
+
+        .section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .section p {
+            max-width: 800px;
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        /* Enhanced Navbar Styles */
+        .nav-header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 9999;
+            transition: all 0.4s ease;
+        }
+
+        /* Initial transparent state */
+        .nav-header.transparent {
+            background: transparent;
+            box-shadow: none;
+        }
+
+        /* Scrolled state */
+        .nav-header.scrolled {
+            background: rgba(34, 34, 34, 0.95);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        /* Navbar inner container */
+        .navbar {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            height: 70px;
+        }
+
+        /* Logo */
+        .logo {
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.5rem;
+            text-decoration: none;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-text {
+            position: relative;
+        }
+
+        /* Nav menu */
+        nav {
+            display: flex;
+            align-items: center;
+        }
+
+        ul.nav-links {
+            list-style: none;
+            display: flex;
+            margin: 0; 
+            padding: 0;
+        }
+
+        ul.nav-links li {
+            position: relative;
+        }
+
+        ul.nav-links > li {
+            margin-left: 1.5rem;
+        }
+
+        /* Nav link styling */
+        ul.nav-links li a,
+        ul.nav-links li > div {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem 0.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            user-select: none;
+            position: relative;
+        }
+
+        /* Underline effect for transparent mode */
+        .transparent ul.nav-links li a::after,
+        .transparent ul.nav-links li > div::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #fff;
+            transition: width 0.3s ease;
+        }
+
+        .transparent ul.nav-links li a:hover::after,
+        .transparent ul.nav-links li > div:hover::after {
+            width: 100%;
+        }
+
+        /* Hover effect for scrolled mode */
+        .scrolled ul.nav-links li a:hover,
+        .scrolled ul.nav-links li > div:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        /* Dropdown arrow */
+        .dropdown-arrow {
+            margin-left: 0.3rem;
+            border: solid #fff;
+            border-width: 0 2px 2px 0;
+            display: inline-block;
+            padding: 3px;
+            transform: rotate(45deg);
+            transition: transform 0.3s ease;
+        }
+
+        /* Dropdown menu */
+        ul.dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: rgba(34, 34, 34, 0.95);
+            min-width: 180px;
+            border-radius: 6px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.25);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 1000;
+            padding: 0.5rem 0;
+        }
+
+        ul.dropdown li {
+            margin: 0;
+        }
+
+        ul.dropdown li a {
+            padding: 0.6rem 1rem;
+            display: block;
+            font-weight: 500;
+        }
+
+        ul.dropdown li a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Show dropdown on hover */
+        ul.nav-links li:hover > ul.dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* Nested dropdown (sub-menu) */
+        ul.dropdown li {
+            position: relative;
+        }
+
+        ul.dropdown li:hover > ul.sub-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        ul.sub-dropdown {
+            position: absolute;
+            top: 0;
+            left: 100%;
+            background: rgba(68, 68, 68, 0.95);
+            min-width: 160px;
+            border-radius: 6px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.25);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            padding: 0.5rem 0;
+        }
+
+        ul.sub-dropdown li a:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* CTA button */
+        .btn-cta {
+            background: #ff5722;
+            color: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 25px;
+            font-weight: 700;
+            margin-left: 1.5rem;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-cta:hover {
+            background: #e64a19;
+        }
+
+        /* Hamburger menu - hidden on desktop */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            width: 28px;
+            height: 22px;
+            justify-content: space-between;
+        }
+
+        .hamburger div {
+            height: 3.5px;
+            background: #fff;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        /* Hamburger active animation */
+        .hamburger.active div:nth-child(1) {
+            transform: translateY(9px) rotate(45deg);
+        }
+        .hamburger.active div:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger.active div:nth-child(3) {
+            transform: translateY(-9px) rotate(-45deg);
+        }
+
+        /* Responsive styles */
+        @media (max-width: 900px) {
+            nav {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background: rgba(34, 34, 34, 0.95);
+                height: calc(100vh - 70px);
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                flex-direction: column;
+                overflow-y: auto;
+                z-index: 9998;
+            }
+
+            nav.active {
+                transform: translateX(0);
+            }
+
+            ul.nav-links {
+                flex-direction: column;
+                padding: 1rem 0;
+                width: 100%;
+            }
+
+            ul.nav-links > li {
+                margin: 0;
+                width: 100%;
+            }
+
+            ul.nav-links li a,
+            ul.nav-links li > div {
+                padding: 1rem 2rem;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                width: 100%;
+            }
+
+            /* Remove underline effect on mobile */
+            .transparent ul.nav-links li a::after,
+            .transparent ul.nav-links li > div::after {
+                display: none;
+            }
+
+            ul.dropdown,
+            ul.sub-dropdown {
+                position: static;
+                opacity: 1 !important;
+                visibility: visible !important;
+                transform: none !important;
+                box-shadow: none;
+                background: rgba(51, 51, 51, 0.8);
+                border-radius: 0;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease;
+                list-style: none;
+                padding: 0;
+            }
+
+            ul.dropdown.open,
+            ul.sub-dropdown.open {
+                max-height: 500px; /* enough to show content */
+            }
+
+            /* Dropdown arrow rotation on open */
+            .dropdown-arrow.open {
+                transform: rotate(-135deg);
+            }
+
+            /* Hamburger visible on mobile */
+            .hamburger {
+                display: flex;
+            }
+
+            /* CTA button full width on mobile */
+            .btn-cta {
+                margin: 1rem 2rem;
+                width: calc(100% - 4rem);
+                text-align: center;
+                display: block;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="nav-header transparent">
+        <div class="navbar">
+            <a href="#" class="logo">
+                <img src="https://img.icons8.com/ios-filled/50/ffffff/church.png" alt="Logo" width="34" height="34" class="logo-img" />
+                <span class="logo-text">St Bernadette</span>
+            </a>
+
+            <nav id="nav-menu">
+                <ul class="nav-links">
+                    <li><a href="#">Home</a></li>
+
+                    <li>
+                        <div class="dropdown-toggle">Visit <span class="dropdown-arrow"></span></div>
+                        <ul class="dropdown">
+                            <li><a href="#">Contact</a></li>
+                            <li><a href="#">About Us</a></li>
+                            <li><a href="#">Join</a></li>
+                            <li><a href="#">Prayer Requests</a></li>
+                            <li><a href="#">History</a></li>
+                            <li><a href="#">Get Updates</a></li>
+                        </ul>
+                    </li>
+
+                    <li><a href="#">Events</a></li>
+
+                    <li>
+                        <div class="dropdown-toggle">Communities<span class="dropdown-arrow"></span></div>
+                        <ul class="dropdown">
+                            <li><a href="#">Jumuiyas</a></li>
+                            <li><a href="#">PMC</a></li>
+                            <li><a href="#">Youth</a></li>
+                            <li><a href="#">CMA</a></li>
+                            <li><a href="#">CWA</a></li>
+                            <li><a href="#">Choir</a></li>
+                            <li>
+                                <div class="dropdown-toggle">Communities<span class="dropdown-arrow"></span></div>
+                                <ul class="sub-dropdown">
+                                    <li><a href="#">Jumuiyas</a></li>
+                                    <li><a href="#">PMC</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <div class="dropdown-toggle">Sacraments<span class="dropdown-arrow"></span></div>
+                        <ul class="dropdown">
+                            <li><a href="#">Baptism</a></li>
+                            <li><a href="#">Holy Eucharist</a></li>
+                            <li><a href="#">Confirmation</a></li>
+                            <li><a href="#">Anointing Of The Sick</a></li>
+                            <li><a href="#">Reconciliation</a></li>
+                            <li><a href="#">Matrimony</a></li>
+                            <li><a href="#">Funeral Planning</a></li>
+                            <li><a href="#">OCIA program</a></li>
+                            <li><a href="#">Holy Orders</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div class="dropdown-toggle">Serve<span class="dropdown-arrow"></span></div>
+                        <ul class="dropdown">
+                            <li><a href="#">In The Parish</a></li>
+                            <li><a href="#">In The Community</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#">Reflect</a></li>
+
+                    <li><a href="#" class="btn-cta">Contribute</a></li>
+                </ul>
+            </nav>
+
+            <div class="hamburger" id="hamburger">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Welcome to St. Bernadette</h1>
+        <p>Join our community of faith, hope, and love as we journey together in Christ.</p>
+        <a href="#" class="btn-cta">Learn More</a>
+    </section>
+
+    <!-- Dark Section for Scrolling -->
+    <section class="section dark-section">
+        <h2>Our Mission</h2>
+        <p>St. Bernadette parish is committed to spreading the Gospel message and serving our community through faith, education, and charitable works. We strive to create a welcoming environment where all can experience God's love.</p>
+        <p>We invite you to join us in worship and become part of our vibrant faith community.</p>
+        <h2>Weekly Services</h2>
+        <p>Join us for Mass every Sunday at 8:00 AM, 10:30 AM, and 5:00 PM. Daily Mass is celebrated Monday through Friday at 9:00 AM.</p>
+        <h2>Community Outreach</h2>
+        <p>Our parish is actively involved in various outreach programs, including food drives, homeless shelters, and educational support for underprivileged children.</p>
+        <h2>Parish Events</h2>
+        <p>We host numerous events throughout the year to build community and deepen our faith. Check our calendar for upcoming activities and join us!</p>
+    </section>
+
+    <script>
+        // Navbar scroll effect
+        const navHeader = document.querySelector('.nav-header');
+        
+        function handleScroll() {
+            if (window.scrollY > 50) {
+                navHeader.classList.remove('transparent');
+                navHeader.classList.add('scrolled');
+            } else {
+                navHeader.classList.add('transparent');
+                navHeader.classList.remove('scrolled');
+            }
+        }
+        
+        // Initial check
+        handleScroll();
+        
+        // Add scroll event listener
+        window.addEventListener('scroll', handleScroll);
+        
+        // Hamburger toggle
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('nav-menu');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        // Dropdown toggles for mobile
+        const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+
+        dropdownToggles.forEach(toggle => {
+            toggle.addEventListener('click', e => {
+                if(window.innerWidth <= 900) {
+                    e.preventDefault();
+                    const dropdown = toggle.nextElementSibling;
+                    const arrow = toggle.querySelector('.dropdown-arrow');
+                    if(dropdown.classList.contains('open')) {
+                        dropdown.classList.remove('open');
+                        arrow.classList.remove('open');
+                    } else {
+                        // Close other open dropdowns at same level
+                        const parentUl = toggle.parentElement.parentElement;
+                        parentUl.querySelectorAll('.dropdown.open').forEach(openDropdown => {
+                            openDropdown.classList.remove('open');
+                        });
+                        parentUl.querySelectorAll('.dropdown-arrow.open').forEach(openArrow => {
+                            openArrow.classList.remove('open');
+                        });
+                        dropdown.classList.add('open');
+                        arrow.classList.add('open');
+                    }
+                }
+            });
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', e => {
+            if(window.innerWidth <= 900) {
+                if(!navMenu.contains(e.target) && !hamburger.contains(e.target)) {
+                    navMenu.classList.remove('active');
+                    hamburger.classList.remove('active');
+                    // Close all dropdowns
+                    document.querySelectorAll('.dropdown.open').forEach(d => d.classList.remove('open'));
+                    document.querySelectorAll('.dropdown-arrow.open').forEach(a => a.classList.remove('open'));
+                }
+            }
+        });
+    </script>
+</body>
+</html>

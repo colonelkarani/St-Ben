@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Church Admin Dashboard – Gallery</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #2d3748;
+      --accent: #4fd1c5;
+      --bg: #f7fafc;
+      --card-bg: #fff;
+      --shadow: 0 4px 20px rgba(0,0,0,0.07);
+      --radius: 14px;
+      --nav-height: 60px;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    /* Navbar */
+    nav.navbar {
+      position: sticky;
+      top: 0;
+      background: var(--card-bg);
+      box-shadow: var(--shadow);
+      height: var(--nav-height);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      z-index: 1000;
+    }
+    nav .logo {
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: var(--accent);
+      letter-spacing: 1.2px;
+      user-select: none;
+    }
+    nav .nav-links {
+      display: flex;
+      gap: 1.2rem;
+    }
+    nav .nav-links a {
+      text-decoration: none;
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.5em 0.8em;
+      border-radius: 8px;
+      transition: background 0.25s, color 0.25s;
+      user-select: none;
+    }
+    nav .nav-links a:hover,
+    nav .nav-links a.active {
+      background: var(--accent);
+      color: #222;
+    }
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      width: 26px;
+      height: 20px;
+      justify-content: space-between;
+      user-select: none;
+    }
+    .hamburger span {
+      display: block;
+      height: 3px;
+      background: var(--primary);
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+    /* Mobile Nav */
+    @media (max-width: 768px) {
+      nav .nav-links {
+        position: fixed;
+        top: var(--nav-height);
+        right: 0;
+        background: var(--card-bg);
+        flex-direction: column;
+        width: 220px;
+        height: calc(100vh - var(--nav-height));
+        padding-top: 1rem;
+        box-shadow: -4px 0 12px rgba(0,0,0,0.06);
+        transform: translateX(100%);
+        transition: transform 0.35s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        overflow-y: auto;
+        align-items: flex-start;
+        padding-left: 2rem;
+      }
+      nav .nav-links.active {
+        transform: translateX(0);
+      }
+      nav .nav-links a {
+        padding: 0.75em 0;
+      }
+      .hamburger {
+        display: flex;
+      }
+    }
+    .main-content {
+      flex: 1;
+      padding: 1rem 1.5rem 2rem;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .dashboard-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      letter-spacing: -0.8px;
+      color: var(--primary);
+    }
+    .site-overview {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 0.9rem 1.4rem;
+      min-width: 130px;
+      flex: 1 1 130px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      transition: box-shadow 0.2s;
+    }
+    .stat-card h3 {
+      margin: 0 0 0.3rem 0;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.6px;
+    }
+    .stat-card span {
+      font-size: 0.9rem;
+      color: #4a5568;
+      font-weight: 600;
+    }
+    /* Gallery Section */
+    .section-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.5rem 1.8rem;
+      margin-bottom: 2rem;
+    }
+    .section-card h2 {
+      font-size: 1.3rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+    }
+    /* Upload input */
+    #gallery-upload {
+      margin-bottom: 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    /* Gallery grid */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill,minmax(100px,1fr));
+      gap: 12px;
+      max-height: 400px;
+      overflow-y: auto;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 1rem;
+    }
+    .gallery-item {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+      cursor: pointer;
+      background: #f0f4f8;
+    }
+    .gallery-item img {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+      display: block;
+      border-radius: 10px;
+      transition: transform 0.3s ease;
+    }
+    .gallery-item:hover img {
+      transform: scale(1.05);
+    }
+    .delete-btn {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: rgba(229, 62, 62, 0.9);
+      border: none;
+      color: white;
+      font-size: 18px;
+      line-height: 1;
+      padding: 2px 7px;
+      border-radius: 50%;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.2s;
+    }
+    .delete-btn:hover {
+      background: #c53030;
+    }
+    /* Responsive */
+    @media (max-width: 600px) {
+      .dashboard-title {
+        font-size: 1.5rem;
+      }
+      .site-overview {
+        flex-direction: column;
+        gap: 0.8rem;
+      }
+      .stat-card {
+        padding: 0.8rem 1.1rem;
+      }
+      .gallery-grid {
+        grid-template-columns: repeat(auto-fill,minmax(80px,1fr));
+      }
+      .gallery-item img {
+        height: 80px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="#" class="logo">St Bernadette Admin</a>
+    <div class="hamburger" aria-label="Toggle navigation menu" role="button" tabindex="0">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <div class="nav-links">
+      <a href="announcements.html">Announcements</a>
+      <a href="events.html">Events</a>
+      <a href="communities.html">Communities</a>
+      <a href="gallery.html" class="active">Gallery</a>
+      <a href="contact.html">Contact Info</a>
+      <a href="messages.html">Messages</a>
+    </div>
+  </nav>
+  <main class="main-content" role="main">
+    <h1 class="dashboard-title">🖼 Gallery</h1>
+
+    <!-- Site Overview -->
+    <section class="site-overview" aria-label="Site Overview">
+      <div class="stat-card">
+        <h3 id="stat-announcements">0</h3>
+        <span>Total Announcements</span>
+      </div>
+      <div class="stat-card">
+        <h3 id="stat-events">0</h3>
+        <span>Upcoming Events</span>
+      </div>
+      <div class="stat-card">
+        <h3 id="stat-jumuiyas">0</h3>
+        <span>Number of Jumuiyas</span>
+      </div>
+      <div class="stat-card">
+        <h3 id="stat-photos">0</h3>
+        <span>Total Photos</span>
+      </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="section-card" aria-labelledby="gallery-title">
+      <h2 id="gallery-title">Upload & Manage Photos</h2>
+      <input type="file" id="gallery-upload" accept="image/*" multiple aria-label="Upload photos" />
+      <div class="gallery-grid" id="gallery-grid" aria-live="polite" aria-label="Gallery images"></div>
+    </section>
+  </main>
+
+  <script>
+    // Hamburger Menu toggle
+    const hamburger = document.querySelector('.hamburger');
+    const navLinks = document.querySelector('.nav-links');
+    hamburger.addEventListener('click', () => navLinks.classList.toggle('active'));
+    hamburger.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        navLinks.classList.toggle('active');
+      }
+    });
+
+    // Storage keys
+    const STORAGE_KEYS = {
+      announcements: 'church_announcements',
+      events: 'church_events',
+      jumuiyas: 'church_jumuiyas',
+      gallery: 'church_gallery'
+    };
+
+    // Load data or initialize empty
+    let announcements = JSON.parse(localStorage.getItem(STORAGE_KEYS.announcements)) || [];
+    let events = JSON.parse(localStorage.getItem(STORAGE_KEYS.events)) || [];
+    let jumuiyas = JSON.parse(localStorage.getItem(STORAGE_KEYS.jumuiyas)) || [];
+    let gallery = JSON.parse(localStorage.getItem(STORAGE_KEYS.gallery)) || [];
+
+    // DOM Elements
+    const statAnnouncements = document.getElementById('stat-announcements');
+    const statEvents = document.getElementById('stat-events');
+    const statJumuiyas = document.getElementById('stat-jumuiyas');
+    const statPhotos = document.getElementById('stat-photos');
+
+    const galleryUpload = document.getElementById('gallery-upload');
+    const galleryGrid = document.getElementById('gallery-grid');
+
+    // Update site overview stats
+    function updateStats() {
+      statAnnouncements.textContent = announcements.length;
+      statEvents.textContent = events.length;
+      statJumuiyas.textContent = jumuiyas.length;
+      statPhotos.textContent = gallery.length;
+    }
+
+    // Render gallery images
+    function renderGallery() {
+      galleryGrid.innerHTML = '';
+      if (gallery.length === 0) {
+        galleryGrid.innerHTML = '<p style="color:#718096; font-style: italic;">No photos uploaded yet.</p>';
+        return;
+      }
+      gallery.forEach((img, i) => {
+        const div = document.createElement('div');
+        div.className = 'gallery-item';
+        const image = document.createElement('img');
+        image.src = img.data;
+        image.alt = img.alt || `Photo ${i + 1}`;
+        image.loading = 'lazy';
+        const btnDelete = document.createElement('button');
+        btnDelete.className = 'delete-btn';
+        btnDelete.title = 'Delete photo';
+        btnDelete.textContent = '×';
+        btnDelete.addEventListener('click', () => {
+          if (confirm('Delete this photo?')) {
+            gallery.splice(i, 1);
+            saveGallery();
+            renderGallery();
+            updateStats();
+          }
+        });
+        div.appendChild(image);
+        div.appendChild(btnDelete);
+        galleryGrid.appendChild(div);
+      });
+    }
+
+    // Save gallery to localStorage
+    function saveGallery() {
+      localStorage.setItem(STORAGE_KEYS.gallery, JSON.stringify(gallery));
+    }
+
+    // Handle file upload
+    galleryUpload.addEventListener('change', e => {
+      const files = Array.from(e.target.files);
+      if (files.length === 0) return;
+      const readers = files.map(file => {
+        return new Promise(resolve => {
+          const reader = new FileReader();
+          reader.onload = () => resolve({ data: reader.result, alt: file.name });
+          reader.readAsDataURL(file);
+        });
+      });
+      Promise.all(readers).then(images => {
+        gallery.push(...images);
+        saveGallery();
+        renderGallery();
+        updateStats();
+        galleryUpload.value = '';
+      });
+    });
+
+    // Initial render
+    updateStats();
+    renderGallery();
+  </script>
+</body>
+</html>

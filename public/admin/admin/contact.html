@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Church Admin Dashboard – Contact Info</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #2d3748;
+      --accent: #4fd1c5;
+      --bg: #f7fafc;
+      --card-bg: #fff;
+      --shadow: 0 4px 20px rgba(0,0,0,0.07);
+      --radius: 14px;
+      --nav-height: 60px;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    /* Navbar */
+    nav.navbar {
+      position: sticky;
+      top: 0;
+      background: var(--card-bg);
+      box-shadow: var(--shadow);
+      height: var(--nav-height);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      z-index: 1000;
+    }
+    nav .logo {
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: var(--accent);
+      letter-spacing: 1.2px;
+      user-select: none;
+    }
+    nav .nav-links {
+      display: flex;
+      gap: 1.2rem;
+    }
+    nav .nav-links a {
+      text-decoration: none;
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.5em 0.8em;
+      border-radius: 8px;
+      transition: background 0.25s, color 0.25s;
+      user-select: none;
+    }
+    nav .nav-links a:hover,
+    nav .nav-links a.active {
+      background: var(--accent);
+      color: #222;
+    }
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      width: 26px;
+      height: 20px;
+      justify-content: space-between;
+      user-select: none;
+    }
+    .hamburger span {
+      display: block;
+      height: 3px;
+      background: var(--primary);
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+    /* Mobile Nav */
+    @media (max-width: 768px) {
+      nav .nav-links {
+        position: fixed;
+        top: var(--nav-height);
+        right: 0;
+        background: var(--card-bg);
+        flex-direction: column;
+        width: 220px;
+        height: calc(100vh - var(--nav-height));
+        padding-top: 1rem;
+        box-shadow: -4px 0 12px rgba(0,0,0,0.06);
+        transform: translateX(100%);
+        transition: transform 0.35s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        overflow-y: auto;
+        align-items: flex-start;
+        padding-left: 2rem;
+      }
+      nav .nav-links.active {
+        transform: translateX(0);
+      }
+      nav .nav-links a {
+        padding: 0.75em 0;
+      }
+      .hamburger {
+        display: flex;
+      }
+    }
+    .main-content {
+      flex: 1;
+      padding: 1rem 1.5rem 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .dashboard-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      letter-spacing: -0.8px;
+      color: var(--primary);
+    }
+    .section-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.5rem 2rem;
+      margin-bottom: 2rem;
+    }
+    .section-card h2 {
+      font-size: 1.3rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+    }
+    form {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    label {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #4a5568;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="url"] {
+      padding: 0.6em 0.8em;
+      border-radius: 8px;
+      border: 1.5px solid #e2e8f0;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: border-color 0.3s;
+    }
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="tel"]:focus,
+    input[type="url"]:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+    button {
+      background: var(--accent);
+      color: #222;
+      border: none;
+      padding: 0.75em 1.6em;
+      font-weight: 700;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      width: fit-content;
+    }
+    button:hover {
+      background: #38b2ac;
+    }
+    /* Responsive */
+    @media (max-width: 600px) {
+      .dashboard-title {
+        font-size: 1.5rem;
+      }
+      .section-card {
+        padding: 1rem 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="#" class="logo">St Bernadette Admin</a>
+    <div class="hamburger" aria-label="Toggle navigation menu" role="button" tabindex="0">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <div class="nav-links">
+      <a href="announcements.html">Announcements</a>
+      <a href="events.html">Events</a>
+      <a href="communities.html">Communities</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="contact.html" class="active">Contact Info</a>
+      <a href="messages.html">Messages</a>
+    </div>
+  </nav>
+  <main class="main-content" role="main">
+    <h1 class="dashboard-title">📇 Contact Information</h1>
+
+    <section class="section-card" aria-labelledby="contact-info-title">
+      <h2 id="contact-info-title">Edit Church Contact Info</h2>
+      <form id="contact-form" aria-label="Edit church contact information">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" placeholder="+254 700 000000" required />
+
+        <label for="email">Email Address</label>
+        <input type="email" id="email" placeholder="email@church.org" required />
+
+        <label for="address">Physical Address</label>
+        <input type="text" id="address" placeholder="Church address" required />
+
+        <label for="facebook">Facebook URL</label>
+        <input type="url" id="facebook" placeholder="https://facebook.com/yourchurch" />
+
+        <label for="twitter">Twitter URL</label>
+        <input type="url" id="twitter" placeholder="https://twitter.com/yourchurch" />
+
+        <label for="instagram">Instagram URL</label>
+        <input type="url" id="instagram" placeholder="https://instagram.com/yourchurch" />
+
+        <button type="submit">Save Contact Info</button>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    // Hamburger Menu toggle
+    const hamburger = document.querySelector('.hamburger');
+    const navLinks = document.querySelector('.nav-links');
+    hamburger.addEventListener('click', () => navLinks.classList.toggle('active'));
+    hamburger.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        navLinks.classList.toggle('active');
+      }
+    });
+
+    const STORAGE_KEY = 'church_contact_info';
+
+    const contactForm = document.getElementById('contact-form');
+    const phoneInput = document.getElementById('phone');
+    const emailInput = document.getElementById('email');
+    const addressInput = document.getElementById('address');
+    const facebookInput = document.getElementById('facebook');
+    const twitterInput = document.getElementById('twitter');
+    const instagramInput = document.getElementById('instagram');
+
+    // Load saved contact info from localStorage
+    function loadContactInfo() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return;
+      try {
+        const data = JSON.parse(saved);
+        phoneInput.value = data.phone || '';
+        emailInput.value = data.email || '';
+        addressInput.value = data.address || '';
+        facebookInput.value = data.facebook || '';
+        twitterInput.value = data.twitter || '';
+        instagramInput.value = data.instagram || '';
+      } catch {
+        // ignore parse errors
+      }
+    }
+
+    // Save contact info to localStorage
+    contactForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const data = {
+        phone: phoneInput.value.trim(),
+        email: emailInput.value.trim(),
+        address: addressInput.value.trim(),
+        facebook: facebookInput.value.trim(),
+        twitter: twitterInput.value.trim(),
+        instagram: instagramInput.value.trim()
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      alert('Contact information saved!');
+    });
+
+    // Initialize form
+    loadContactInfo();
+  </script>
+</body>
+</html>

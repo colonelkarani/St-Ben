@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serve - St. Bernadette Catholic Church</title>
+     <!-- NavBar Styles -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>    
+    <style>
+        :root {
+            --primary: #1a2639;
+            --secondary: #d4b483;
+            --light: #f8f4e3;
+            --dark: #102030;
+            --accent: #a76571;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--light);
+            color: var(--primary);
+            overflow-x: hidden;
+            /* Added a background image to demonstrate the navbar transparency */
+            background: linear-gradient(rgba(26, 38, 57, 0.7), rgba(26, 38, 57, 0.4)), url('/api/placeholder/1920/1080') center/cover;
+            background-attachment: fixed;
+            height: 200vh; /* Making the page scrollable for demo */
+        }
+        
+        /* Navbar Styles */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 1.5rem 2rem;
+            transition: all 0.4s ease;
+            will-change: transform; /* Optimization for animations */
+        }
+        
+        .navbar.scrolled {
+            background-color: var(--primary);
+            padding: 1rem 2rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        
+        .logo-icon {
+            font-size: 1.8rem;
+            color: var(--secondary);
+            margin-right: 0.8rem;
+        }
+        
+        .logo-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .nav-item {
+            position: relative;
+        }
+        
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            padding: 0 0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--secondary);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+        
+        .dropdown {
+            position: relative;
+        }
+        
+        .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        
+        .dropdown-toggle i {
+            font-size: 0.8rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 1rem);
+            left: 50%;
+            transform: translateX(-50%) scaleY(0.8);
+            min-width: 200px;
+            background-color: var(--primary);
+            border-radius: 5px;
+            padding: 1rem 0;
+            opacity: 0;
+            visibility: hidden;
+            transform-origin: top center;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .dropdown-menu::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%) rotate(45deg);
+            width: 10px;
+            height: 10px;
+            background-color: var(--primary);
+        }
+        
+        .dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) scaleY(1);
+        }
+        
+        .dropdown:hover .dropdown-toggle i {
+            transform: rotate(180deg);
+        }
+        
+        .dropdown-item {
+            display: block;
+            padding: 0.7rem 1.5rem;
+            color: white;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .dropdown-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--secondary);
+            padding-left: 1.8rem;
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* Added overlay for mobile menu */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .close-menu{
+            visibility:hidden ;
+        }
+        
+        @media (max-width: 1100px) {
+            .mobile-menu-btn {
+                display: block;
+                z-index: 1001;
+            }
+            .dropdown-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--secondary);
+            padding-left: 0.1rem;
+        }
+        .dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0%) scaleY(1);
+        }
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -280px; /* Changed from -100% to exact pixels */
+                width: 280px;
+                height: 100vh;
+                background-color: var(--primary);
+                flex-direction: column;
+                padding: 6rem 2rem 2rem;
+                gap: 1.5rem;
+                transition: right 0.4s ease;
+                z-index: 999;
+                box-shadow: -5px 0 30px rgba(0, 0, 0, 0.1);
+                overflow-y: auto; /* Added scroll for tall menus */
+            }
+            
+            .nav-links.active {
+                right: 0;
+            }
+            
+            .dropdown-menu {
+                position: static;
+                transform: none;
+                background-color: rgba(255, 255, 255, 0.05);
+                box-shadow: none;
+                padding: 0;
+                margin-top: 0.5rem;
+                max-height: 0;
+                overflow: hidden;
+                opacity: 1;
+                visibility: visible;
+                border-radius: 5px;
+                transition: max-height 0.4s ease, padding 0.4s ease;
+            }
+            
+            .dropdown-menu::before {
+                display: none;
+            }
+            
+            .dropdown.active .dropdown-menu {
+                max-height: 500px;
+                padding: 0.5rem 0;
+            }
+            
+            .dropdown-toggle {
+
+                justify-content: space-between;
+                width: 100%;
+            }
+            
+            .close-menu {
+                position: absolute;
+                top: 1.5rem;
+                right: 1.5rem;
+                background: none;
+                border: none;
+                color: white;
+                font-size: 1.2rem;
+                cursor: pointer;
+                z-index: 1001;
+                visibility: visible;
+            }
+            
+            /* Fix for dropdown link click area */
+            .dropdown-toggle {
+                pointer-events: auto;
+            }
+            
+            /* Make the chevron container clickable separately */
+            .dropdown-chevron {
+                padding: 10px;
+                margin: -10px;
+                cursor: pointer;
+            }
+        }
+
+        /* Demo content to show scrolling effect */
+        .demo-content {
+            height: 150vh;
+            padding-top: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+        }
+        
+        .demo-content h1 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+        }
+        
+        .demo-content p {
+            max-width: 600px;
+            line-height: 1.6;
+        }
+        
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2C3E50;
+            --secondary: #7F8C8D;
+            --accent: #D4AF37;
+            --light: #F5F5F5;
+            --dark: #121212;
+            --deepred: #8b0000;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Open Sans', sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: var(--light);
+        }
+        h1, h2, h3, h4 {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #fff;
+            text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+        }
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            color: var(--primary);
+            text-align: center;
+            position: relative;
+        }
+        h2::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 3px;
+            background: var(--accent);
+            margin: 10px auto 0;
+        }
+        h3 {
+            font-size: 1.8rem;
+            color: #555;
+            margin: 20px 0 15px;
+            text-align: center;
+        }
+        h4 {
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 5px;
+            text-align: center;
+        }
+        p {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+        h1, h2, h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+        }
+        
+       
+        
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            width: 100%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(rgba(26, 38, 57, 0.7), rgba(26, 38, 57, 0.4)), url('./images/event1.jpg') center/cover;
+            color: white;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='rgba(255,255,255,0.05)' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.5;
+            z-index: 1;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 0 2rem;
+        }
+        
+        .hero h2 {
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 300;
+          color: #d3c4ae;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            letter-spacing: 3px;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+            
+            line-height: 1.8;
+            font-weight: 300;
+        }
+        
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+     
+            z-index: 2;
+        }
+        
+        .scroll-indicator span {
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        
+        .scroll-line {
+            width: 1px;
+            height: 60px;
+            background-color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .scroll-line::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 30%;
+            background-color: var(--secondary);
+            animation: scrollDown 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes scrollDown {
+            0% {
+                transform: translateY(-100%);
+            }
+            100% {
+                transform: translateY(333%);
+            }
+        }
+        .serve-section {
+            background-color: #fff;
+            padding: 40px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+        }
+        .serve-intro {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 40px;
+        }
+        .scripture-box {
+            background-color: #f0e6d9;
+            padding: 30px;
+            border-left: 5px solid var(--accent);
+            margin: 30px 0;
+            font-style: italic;
+            position: relative;
+        }
+        .scripture-box:before {
+            content: "“";
+            font-size: 60px;
+            position: absolute;
+            top: -20px;
+            left: 10px;
+            color: #d3c4ae;
+        }
+        .scripture-reference {
+            text-align: right;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .ministry-tabs {
+            margin: 40px 0;
+        }
+        .tab-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .tab-button {
+            padding: 12px 20px;
+            background: #f0e6d9;
+            border: none;
+            border-radius: 30px;
+            font-family: inherit;
+            font-size: 1rem;
+            color: #8b0000;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .tab-button:hover {
+            background: #e5d7c3;
+        }
+        .tab-button.active {
+            background: #8b0000;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .ministry-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        .ministry-card {
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .ministry-card:hover {
+            transform: translateY(-5px);
+        }
+        .ministry-image {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            object-fit: cover;
+            display: block;
+            background: #eee;
+            min-height: 200px;
+            max-height: 220px;
+        }
+        .ministry-content {
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .ministry-title {
+            font-size: 1.4rem;
+            color: #8b0000;
+            margin-bottom: 10px;
+        }
+        .ministry-description {
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+        .ministry-details {
+            margin-top: auto;
+        }
+        .ministry-contact {
+            font-style: italic;
+            color: #666;
+        }
+        .ministry-time {
+            margin-top: 8px;
+            font-weight: 600;
+        }
+        .cta-button {
+            display: inline-block;
+            background: #8b0000;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 15px;
+            transition: background 0.3s ease;
+            text-align: center;
+        }
+        .cta-button:hover {
+            background: #6d0000;
+        }
+        .testimonial-section {
+            margin: 60px 0;
+        }
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        .testimonial-card {
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .testimonial-text:before {
+            content: "“";
+            font-size: 50px;
+            position: absolute;
+            top: -25px;
+            left: -10px;
+            color: #e9e2d8;
+            z-index: 0;
+        }
+        .testimonial-author {
+            font-weight: 600;
+            color: #8b0000;
+        }
+        .testimonial-ministry {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        .get-involved {
+            text-align: center;
+            margin: 50px 0 30px;
+        }
+        .contact-info {
+            background: #f0e6d9;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 40px;
+        }
+        .contact-info h3 {
+            margin-bottom: 15px;
+        }
+        .contact-details {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .contact-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .contact-label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #8b0000;
+        }
+        @media (max-width: 900px) {
+            .serve-section, .container {
+                padding: 10px;
+            }
+            .ministry-grid, .testimonial-grid, .contact-details {
+                grid-template-columns: 1fr;
+                flex-direction: column;
+                gap: 20px;
+            }
+            .hero h1 { font-size: 2.5rem; }
+            .hero { height: 32vh; min-height: 180px; }
+        }
+    </style>
+</head>
+<body>
+     <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-church logo-icon"></i>
+                <span class="logo-text">St Bernadette</span>
+            </a>
+            
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <ul class="nav-links">
+                <button class="close-menu">
+                    <i class="fas fa-times"></i>
+                </button>
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link active">Home</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="visit.html" class="nav-link dropdown-toggle">
+                        Visit <span class="dropdown-chevron"><i class="fas fa-chevron-down"></i></span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a href="contact.html" class="dropdown-item">Contact</a>
+                        <a href="aboutus.html" class="dropdown-item">About Us</a>
+                        <a href="join.html" class="dropdown-item">Join</a>
+                        <a href="prayerrequest.html" class="dropdown-item">Prayer Request</a>
+                        <a href="history.html" class="dropdown-item">History</a>
+                        <a href="#" class="dropdown-item">Get Updates</a>
+
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="events.html" class="nav-link active">Events</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="communities.html" class="nav-link dropdown-toggle">
+                        Communities<span class="dropdown-chevron"><i class="fas fa-chevron-down"></i></span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a href="#" class="dropdown-item">Jumuiyas</a>
+                        <a href="#" class="dropdown-item">P.M.C</a>
+                        <a href="youth.html" class="dropdown-item">Youth</a>
+                        <a href="#" class="dropdown-item">CWA</a>
+                        <a href="#" class="dropdown-item">CMA</a>
+                        <a href="#" class="dropdown-item">Choir</a>
+
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="sacrament.html" class="nav-link dropdown-toggle">
+                        Sacraments <span class="dropdown-chevron"><i class="fas fa-chevron-down"></i></span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a href="baptism.html" class="dropdown-item">Baptism</a>
+                        <a href="#" class="dropdown-item">Holy Ministry</a>
+                        <a href="#" class="dropdown-item">Confirmation</a>
+                        <a href="#" class="dropdown-item">Anointing Of The Sick</a>
+                        <a href="#" class="dropdown-item">Reconciliation</a>
+                        <a href="#" class="dropdown-item">Matrimony</a>
+                        <a href="#" class="dropdown-item">Funeral Planning</a>
+                        <a href="#" class="dropdown-item">OCIA Program</a>
+                        <a href="#" class="dropdown-item">Holy Orders</a>
+
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="serve.html" class="nav-link">Serve</a>
+                </li>
+                <li class="nav-item">
+                    <a href="reflect.html" class="nav-link">Reflect</a>
+                </li>
+                <li class="nav-item">
+                    <a href="contribute.html" class="nav-link">Contribute</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <!-- Overlay for mobile menu -->
+    <div class="menu-overlay"></div>
+    <!-- HERO SECTION -->
+   <section class="hero">
+            <div class="hero-content">
+                <h2>Serve</h2>
+                <p>Share your gifts. Make a difference. Discover ways to serve at St. Bernadette Catholic Church and in our community.</p>
+                
+            </div>
+            <div class="scroll-indicator">
+                <span>Scroll</span>
+                <div class="scroll-line"></div>
+            </div>
+        </section>
+
+    <div class="container">
+        <section class="serve-section">
+            <h2>Serve Our Parish &amp; Community</h2>
+            <div class="serve-intro">
+                <p>At St. Bernadette Catholic Church, we believe that each person is blessed with unique gifts and talents that can be used to build up the Body of Christ and serve those in need. We invite you to prayerfully consider how God might be calling you to serve in our parish community.</p>
+            </div>
+            <div class="scripture-box">
+                <p>"Each of you should use whatever gift you have received to serve others, as faithful stewards of God's grace in its various forms."</p>
+                <p class="scripture-reference">1 Peter 4:10</p>
+            </div>
+            <div class="ministry-tabs">
+                <div class="tab-container">
+                    <button class="tab-button active" data-tab="liturgical">Liturgical Ministries</button>
+                    <button class="tab-button" data-tab="faith-formation">Faith Formation</button>
+                    <button class="tab-button" data-tab="outreach">Outreach &amp; Service</button>
+                    <button class="tab-button" data-tab="parish-life">Parish Life</button>
+                </div>
+                <!-- Liturgical Ministries -->
+                <div id="liturgical" class="tab-content active">
+                    <h3>Liturgical Ministries</h3>
+                    <p>Our liturgical ministries enhance our worship experience and help us celebrate the Eucharist with reverence and joy. From proclaiming the Word of God to assisting at the altar, there are many ways to serve in our liturgies.</p>
+                    <div class="ministry-grid">
+                        <div class="ministry-card">
+                            <img src="/api/placeholder/400/320" alt="Eucharistic Ministers" class="ministry-image">
+                            <div class="ministry-content">
+                                <h4 class="ministry-title">Extraordinary Ministers of Holy Communion</h4>
+                                <p class="ministry-description">Assist in the distribution of the Eucharist during Mass and to the homebound. Training provided quarterly.</p>
+                                <div class="ministry-details">
+                                    <p class="ministry-contact">Contact: Deacon Robert Johnson</p>
+                                    <p class="ministry-time">Training: First Saturday of each quarter, 9:00 AM</p>
+                                    <a href="#" class="cta-button">Volunteer</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ministry-card">
+                            <img src="/api/placeholder/400/320" alt="Lectors" class="ministry-image">
+                            <div class="ministry-content">
+                                <h4 class="ministry-title">Lectors</h4>
+                                <p class="ministry-description">Proclaim the Word of God during liturgies. Training in public speaking and Scripture proclamation provided.</p>
+                                <div class="ministry-details">
+                                    <p class="ministry-contact">Contact: Sarah Martinez</p>
+                                    <p class="ministry-time">Training: Second Tuesday of each month, 7:00 PM</p>
+                                    <a href="#" class="cta-button">Volunteer</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ministry-card">
+                            <img src="/api/placeholder/400/320" alt="Altar Servers" class="ministry-image">
+                            <div class="ministry-content">
+                                <h4 class="ministry-title">Altar Servers</h4>
+                                <p class="ministry-description">Assist the priest during Mass. Open to children (4th grade and up), teens, and adults.</p>
+                                <div class="ministry-details">
+                                    <p class="ministry-contact">Contact: Deacon William Thompson</p>
+                                    <p class="ministry-time">Training: Third Saturday of each month, 10:00 AM</p>
+                                    <a href="#" class="cta-button">Volunteer</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ministry-card">
+                            <img src="/api/placeholder/400/320" alt="Music Ministry" class="ministry-image">
+                            <div class="ministry-content">
+                                <h4 class="ministry-title">Music Ministry</h4>
+                                <p class="ministry-description">Share your musical gifts as a cantor, choir member, or instrumentalist. Multiple choirs available for different Mass times and styles.</p>
+                                <div class="ministry-details">
+                                    <p class="ministry-contact">Contact: Dr. Elizabeth Wilson, Music Director</p>
+                                    <p class="ministry-time">Rehearsals: Thursday evenings, 7:00 PM</p>
+                                    <a href="#" class="cta-button">Volunteer</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Faith Formation -->
+                <div id="faith-formation" class="tab-content">
+                    <h3>Faith Formation Ministries</h3>
+                    <p>Our faith formation programs help parishioners of all ages grow in their relationship with Christ and understanding of our Catholic faith. These ministries offer opportunities to both learn and teach.</p>
+                    <div class="ministry-grid">
+                        <div class="ministry-card">
+                            <img src="/api/placeholder/400/320" alt="Religious Education" class="ministry-image">
+                            <div class="ministry-content">
+                                <h4 class="ministry-title">Religious Education Catechists</h4>
+                                <p class="ministry-description">Share your faith with children in grades K-8. Curriculum and training provided. Commitment is weekly during the school year.</p>
+                                <div class="ministry-details">
+                                    <p class="ministry-contact">Contact: Maria Gonzalez, DRE</p>
+                                    <p class="ministry-time">Classes: Sundays, 9:30-10:45 AM or Wednesdays, 6:00-7:15 PM</p>
+                                    <a href="#" class="cta-button">Volunteer</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ministry-card">
+                            <img src="/api/placeholder/400/320" alt="RCIA Team" class="ministry-image">
+                            <div class="ministry-content">
+                                <h4 class="ministry-title">RCIA Team</h4>
+                                <p class="ministry-description">Guide those exploring the Catholic faith through the Rite of Christian Initiation for Adults. Sponsors, catechists, and hospitality volunteers needed.</p>
+                                <div class="ministry-details">
+                                    <p class="ministry-contact">Contact: Deacon William Thompson</p>
+                                    <p class="ministry-time">Sessions: Tuesdays, 7:00-9:00 PM</p>
+                                    <a href="#" class="cta-button">Volunteer</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Outreach & Service -->
+                <div id="outreach" class="tab-content">
+                    <h3>Outreach &amp; Service Ministries</h3>
+                    <p>Serve the wider community through acts of charity, social justice, and direct service. These ministries are open to all ages and abilities.</p>
+                    <div class="ministry-grid">
+                        <div class="ministry-card">
+                            <img src="/api/placeholder/400/320" alt="Food Pantry" class="ministry-image">
+                            <div class="ministry-content">
+                                <h4 class="ministry-title">Food Pantry Volunteers</h4>
+                                <p class="ministry-description">Distribute food to local families in need. Volunteers needed for sorting, packing, and distribution.</p>
+                                <div class="ministry-details">
+                                    <p class="ministry-contact">Contact: Outreach Office</p>
+                                    <p class="ministry-time">Saturdays, 9:00 AM - 12:00 PM</p>
+                                    <a href="#" class="cta-button">Volunteer</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ministry-card">
+                            <img src="/api/placeholder/400/320" alt="Homebound Ministry" class="ministry-image">
+                            <div class="ministry-content">
+                                <h4 class="ministry-title">Homebound Ministry</h4>
+                                <p class="ministry-description">Visit and bring communion to parishioners who are unable to attend Mass due to illness or age.</p>
+                                <div class="ministry-details">
+                                    <p class="ministry-contact">Contact: Deacon Robert Johnson</p>
+                                    <p class="ministry-time">Flexible schedule</p>
+                                    <a href="#" class="cta-button">Volunteer</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Parish Life -->
+                <div id="parish-life" class="tab-content">
+                    <h3>Parish Life Ministries</h3>
+                    <p>Help build a vibrant parish community through hospitality, social events, and fellowship opportunities.</p>
+                    <div class="ministry-grid">
+                        <div class="ministry-card">
+                            <img src="/api/placeholder/400/320" alt="Hospitality" class="ministry-image">
+                            <div class="ministry-content">
+                                <h4 class="ministry-title">Hospitality Team</h4>
+                                <p class="ministry-description">Welcome parishioners and visitors to Mass, assist with parish events, and foster a spirit of hospitality.</p>
+                                <div class="ministry-details">
+                                    <p class="ministry-contact">Contact: Parish Office</p>
+                                    <p class="ministry-time">Sundays, before and after Masses</p>
+                                    <a href="#" class="cta-button">Volunteer</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ministry-card">
+                            <img src="/api/placeholder/400/320" alt="Parish Events" class="ministry-image">
+                            <div class="ministry-content">
+                                <h4 class="ministry-title">Parish Events Volunteers</h4>
+                                <p class="ministry-description">Help plan and run parish events, festivals, and celebrations throughout the year.</p>
+                                <div class="ministry-details">
+                                    <p class="ministry-contact">Contact: Events Committee</p>
+                                    <p class="ministry-time">Varies by event</p>
+                                    <a href="#" class="cta-button">Volunteer</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Testimonials -->
+            <section class="testimonial-section">
+                <h2>Why We Serve</h2>
+                <div class="testimonial-grid">
+                    <div class="testimonial-card">
+                        <div class="testimonial-text">Serving as a catechist has deepened my own faith and allowed me to witness the joy of children discovering God's love.</div>
+                        <div class="testimonial-author">Maria G.</div>
+                        <div class="testimonial-ministry">Religious Education</div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-text">I love being part of the music ministry. Singing at Mass is my way of giving back to God and the parish family.</div>
+                        <div class="testimonial-author">James K.</div>
+                        <div class="testimonial-ministry">Music Ministry</div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="testimonial-text">Bringing communion to the homebound is a privilege. Their gratitude and faith inspire me every week.</div>
+                        <div class="testimonial-author">Deacon Robert</div>
+                        <div class="testimonial-ministry">Homebound Ministry</div>
+                    </div>
+                </div>
+            </section>
+            <!-- Get Involved -->
+            <section class="get-involved">
+                <h2>Ready to Serve?</h2>
+                <p>Contact us to learn more about any ministry or to sign up as a volunteer.</p>
+                <div class="contact-info">
+                    <h3>Contact Our Parish Office</h3>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <div class="contact-label">Phone</div>
+                            <div>(+254) 712-345-678</div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-label">Email</div>
+                            <div>info@stbernadette.org</div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-label">Visit</div>
+                            <div>St. Bernadette Catholic Church, Thika</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </section>
+    </div>
+    <script>
+        // Tab functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            var tabButtons = document.querySelectorAll('.tab-button');
+            var tabContents = document.querySelectorAll('.tab-content');
+            tabButtons.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var tab = this.getAttribute('data-tab');
+                    tabButtons.forEach(function(b) { b.classList.remove('active'); });
+                    tabContents.forEach(function(tc) { tc.classList.remove('active'); });
+                    this.classList.add('active');
+                    document.getElementById(tab).classList.add('active');
+                });
+            });
+        });
+    </script>
+      <!-- NavBar Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Register ScrollTrigger plugin
+            gsap.registerPlugin(ScrollTrigger);
+            
+            // Navbar scroll effect with debouncing
+            const navbar = document.querySelector('.navbar');
+            let scrollTimer;
+            
+            // Initial check on page load
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            }
+            
+            window.addEventListener('scroll', () => {
+                // Clear the previous timer
+                clearTimeout(scrollTimer);
+                
+                // Set a new timer
+                scrollTimer = setTimeout(() => {
+                    if (window.scrollY > 50) {
+                        navbar.classList.add('scrolled');
+                    } else {
+                        navbar.classList.remove('scrolled');
+                    }
+                }, 10); // Small delay for better performance
+            });
+            
+            // Navbar animations with GSAP
+            gsap.from('.navbar', {
+                y: -100,
+                opacity: 0,
+                duration: 1,
+                ease: 'power3.out',
+                delay: 0.2,
+                clearProps: 'all' // Clean up after animation
+            });
+            
+            // Mobile menu elements
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const closeMenuBtn = document.querySelector('.close-menu');
+            const navLinks = document.querySelector('.nav-links');
+            const overlay = document.querySelector('.menu-overlay');
+            const dropdowns = document.querySelectorAll('.dropdown');
+            
+            // Open mobile menu
+            mobileMenuBtn.addEventListener('click', () => {
+                navLinks.classList.add('active');
+                overlay.classList.add('active');
+                document.querySelector('.mobile-menu-btn').style.visibility = 'hidden';
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            });
+            
+            // Close mobile menu function
+            const closeMenu = () => {
+                navLinks.classList.remove('active');
+                overlay.classList.remove('active');
+                document.querySelector('.mobile-menu-btn').style.visibility = 'visible';
+                document.body.style.overflow = ''; // Re-enable scrolling
+            };
+            
+            // Close menu events
+            closeMenuBtn.addEventListener('click', closeMenu);
+            overlay.addEventListener('click', closeMenu);
+            
+            // Handle dropdowns
+            dropdowns.forEach(dropdown => {
+                const dropdownToggle = dropdown.querySelector('.dropdown-toggle');
+                const dropdownChevron = dropdown.querySelector('.dropdown-chevron');
+                
+                // Only for mobile
+                if (window.innerWidth <= 768) {
+                    // Make the main link navigate and chevron toggle dropdown
+                    dropdownChevron.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        // Close other open dropdowns
+                        dropdowns.forEach(otherDropdown => {
+                            if (otherDropdown !== dropdown && otherDropdown.classList.contains('active')) {
+                                otherDropdown.classList.remove('active');
+                            }
+                        });
+                        
+                        // Toggle current dropdown
+                        dropdown.classList.toggle('active');
+                        
+                        // Rotate chevron
+                        const icon = dropdownChevron.querySelector('i');
+                        if (dropdown.classList.contains('active')) {
+                            icon.style.transform = 'rotate(180deg)';
+                        } else {
+                            icon.style.transform = 'rotate(0)';
+                        }
+                    });
+                }
+            });
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                if (window.innerWidth > 768) {
+                    // Reset mobile menu state when switching to desktop
+                    navLinks.classList.remove('active');
+                    overlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                    
+                    // Reset all dropdowns
+                    dropdowns.forEach(dropdown => {
+                        dropdown.classList.remove('active');
+                        const icon = dropdown.querySelector('.dropdown-chevron i');
+                        if (icon) icon.style.transform = 'rotate(0)';
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</body>
+</html>

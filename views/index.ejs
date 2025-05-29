@@ -1,0 +1,1987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>St Bernadette </title>
+  <!-- Page  -->
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <!-- NavBar Styles -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a2639;
+            --secondary: #d4b483;
+            --light: #f8f4e3;
+            --dark: #102030;
+            --accent: #a76571;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--light);
+            color: var(--primary);
+            overflow-x: hidden;
+            /* Added a background image to demonstrate the navbar transparency */
+            background: linear-gradient(rgba(26, 38, 57, 0.7), rgba(26, 38, 57, 0.4)), url('/api/placeholder/1920/1080') center/cover;
+            background-attachment: fixed;
+            height: 200vh; /* Making the page scrollable for demo */
+        }
+        
+        /* Navbar Styles */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 1.5rem 2rem;
+            transition: all 0.4s ease;
+            will-change: transform; /* Optimization for animations */
+        }
+        
+        .navbar.scrolled {
+            background-color: var(--primary);
+            padding: 1rem 2rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        
+        .logo-icon {
+            font-size: 1.8rem;
+            color: var(--secondary);
+            margin-right: 0.8rem;
+        }
+        
+        .logo-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .nav-item {
+            position: relative;
+        }
+        
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            padding: 0 0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--secondary);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+        
+        .dropdown {
+            position: relative;
+        }
+        
+        .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        
+        .dropdown-toggle i {
+            font-size: 0.8rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 1rem);
+            left: 50%;
+            transform: translateX(-50%) scaleY(0.8);
+            min-width: 200px;
+            background-color: var(--primary);
+            border-radius: 5px;
+            padding: 1rem 0;
+            opacity: 0;
+            visibility: hidden;
+            transform-origin: top center;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .dropdown-menu::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%) rotate(45deg);
+            width: 10px;
+            height: 10px;
+            background-color: var(--primary);
+        }
+        
+        .dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) scaleY(1);
+        }
+        
+        .dropdown:hover .dropdown-toggle i {
+            transform: rotate(180deg);
+        }
+        
+        .dropdown-item {
+            display: block;
+            padding: 0.7rem 1.5rem;
+            color: white;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .dropdown-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--secondary);
+            padding-left: 1.8rem;
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* Added overlay for mobile menu */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .close-menu{
+            visibility:hidden ;
+        }
+        
+        @media (max-width: 1100px) {
+            .mobile-menu-btn {
+                display: block;
+                z-index: 1001;
+            }
+            .dropdown-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--secondary);
+            padding-left: 0.1rem;
+        }
+        .dropdown:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0%) scaleY(1);
+        }
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -280px; /* Changed from -100% to exact pixels */
+                width: 280px;
+                height: 100vh;
+                background-color: var(--primary);
+                flex-direction: column;
+                padding: 6rem 2rem 2rem;
+                gap: 1.5rem;
+                transition: right 0.4s ease;
+                z-index: 999;
+                box-shadow: -5px 0 30px rgba(0, 0, 0, 0.1);
+                overflow-y: auto; /* Added scroll for tall menus */
+            }
+            
+            .nav-links.active {
+                right: 0;
+            }
+            
+            .dropdown-menu {
+                position: static;
+                transform: none;
+                background-color: rgba(255, 255, 255, 0.05);
+                box-shadow: none;
+                padding: 0;
+                margin-top: 0.5rem;
+                max-height: 0;
+                overflow: hidden;
+                opacity: 1;
+                visibility: visible;
+                border-radius: 5px;
+                transition: max-height 0.4s ease, padding 0.4s ease;
+            }
+            
+            .dropdown-menu::before {
+                display: none;
+            }
+            
+            .dropdown.active .dropdown-menu {
+                max-height: 500px;
+                padding: 0.5rem 0;
+            }
+            
+            .dropdown-toggle {
+
+                justify-content: space-between;
+                width: 100%;
+            }
+            
+            .close-menu {
+                position: absolute;
+                top: 1.5rem;
+                right: 1.5rem;
+                background: none;
+                border: none;
+                color: white;
+                font-size: 1.2rem;
+                cursor: pointer;
+                z-index: 1001;
+                visibility: visible;
+            }
+            
+            /* Fix for dropdown link click area */
+            .dropdown-toggle {
+                pointer-events: auto;
+            }
+            
+            /* Make the chevron container clickable separately */
+            .dropdown-chevron {
+                padding: 10px;
+                margin: -10px;
+                cursor: pointer;
+            }
+        }
+
+        /* Demo content to show scrolling effect */
+        .demo-content {
+            height: 150vh;
+            padding-top: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+        }
+        
+        .demo-content h1 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+        }
+        
+        .demo-content p {
+            max-width: 600px;
+            line-height: 1.6;
+        }
+        
+    </style>
+    <style>
+        :root {
+            --primary: #1a2639;
+            --secondary: #d4b483;
+            --light: #f8f4e3;
+            --dark: #102030;
+            --accent: #a76571;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--light);
+            color: var(--primary);
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+        }
+        
+        .main-content {
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            width: 100%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(rgba(26, 38, 57, 0.7), rgba(26, 38, 57, 0.4)), url('./images/churchview.jpg') center/cover;
+            color: white;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='rgba(255,255,255,0.05)' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.5;
+            z-index: 1;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 0 2rem;
+        }
+        
+        .hero h2 {
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 300;
+            opacity: 0;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            letter-spacing: 3px;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+            opacity: 0;
+            line-height: 1.8;
+            font-weight: 300;
+        }
+        
+        .hero-btn {
+            background-color: transparent;
+            color: white;
+            border: 1px solid white;
+            padding: 0.8rem 2.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+        }
+        
+        .hero-btn::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0%;
+            height: 100%;
+            background-color: var(--secondary);
+            transition: all 0.3s ease;
+            z-index: -1;
+        }
+        
+        .hero-btn:hover {
+            color: var(--primary);
+            border-color: var(--secondary);
+        }
+        
+        .hero-btn:hover::before {
+            width: 100%;
+        }
+        
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+            opacity: 0;
+            z-index: 2;
+        }
+        
+        .scroll-indicator span {
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        
+        .scroll-line {
+            width: 1px;
+            height: 60px;
+            background-color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .scroll-line::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 30%;
+            background-color: var(--secondary);
+            animation: scrollDown 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes scrollDown {
+            0% {
+                transform: translateY(-100%);
+            }
+            100% {
+                transform: translateY(333%);
+            }
+        }
+        
+        /* Mass Times Section */
+        .content-section {
+            padding: 8rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .content-section h2 {
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .content-section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background-color: var(--secondary);
+            transition: width 1s ease;
+        }
+        
+        .content-section h2.active::after {
+            width: 100%;
+        }
+        
+        .mass-times {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .mass-time-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        .mass-time-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 0;
+            background-color: var(--secondary);
+            transition: height 0.5s ease;
+        }
+        
+        .mass-time-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .mass-time-card:hover::before {
+            height: 100%;
+        }
+        
+        .mass-time-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+        
+        .mass-time-card p {
+            margin-bottom: 0.8rem;
+            color: var(--dark);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        /* Latest Sermon Section */
+        .youtube-section {
+            background-color: var(--primary);
+            color: white;
+            padding: 8rem 2rem;
+            max-width: 100%;
+            margin: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .youtube-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.5;
+            z-index: 1;
+        }
+        
+        .youtube-section > * {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .youtube-section h2 {
+            color: white;
+            font-size: 3rem;
+            margin-bottom: 3rem;
+        }
+        
+        .youtube-section h2::after {
+            background-color: var(--accent);
+        }
+        
+        .youtube-section-content {
+            display: flex;
+            flex-direction: column;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        @media (min-width: 768px) {
+            .youtube-section-content {
+                flex-direction: row;
+                gap: 4rem;
+                align-items: center;
+            }
+        }
+        
+        .video-container {
+            width: 100%;
+            aspect-ratio: 16/9;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            position: relative;
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+        
+        @media (min-width: 768px) {
+            .video-container {
+                width: 60%;
+            }
+        }
+        
+        .video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .video-description {
+            padding: 2rem 0;
+            opacity: 0;
+            transform: translateX(50px);
+        }
+        
+        @media (min-width: 768px) {
+            .video-description {
+                width: 40%;
+                padding: 0;
+            }
+        }
+        
+        .video-description h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+        
+        .sermon-date {
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            color: var(--secondary);
+            font-weight: 300;
+        }
+        
+        .video-description p {
+            margin-bottom: 2rem;
+            line-height: 1.8;
+            font-weight: 300;
+        }
+        
+        .youtube-btn {
+            display: inline-block;
+            background-color: var(--accent);
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(167, 101, 113, 0.3);
+        }
+        
+        .youtube-btn:hover {
+            background-color: #bf7683;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(167, 101, 113, 0.4);
+        }
+        
+        /* Media Queries */
+        @media (max-width: 768px) {
+            .hero h2 {
+                font-size: 3.5rem;
+            }
+            
+            .content-section {
+                padding: 5rem 1.5rem;
+            }
+            
+            .content-section h2 {
+                font-size: 2.5rem;
+            }
+            
+            .youtube-section-content {
+                flex-direction: column;
+            }
+            
+            .video-container, .video-description {
+                width: 100%;
+            }
+            
+            .video-description {
+                padding-top: 2rem;
+            }
+        }
+    </style>
+ <!-- Calendar and Footer -->
+ <style>*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+:root {
+  --primary: #3b5998;
+  --secondary: #4b6cb7;
+  --accent: #f8bd7f;
+  --light: #f9f9f9;
+  --dark: #333;
+  --footer-bg: #1e2b47;
+  --footer-text: #e0e0e0;
+}
+body{
+  line-height: 1.6;
+  color: #333;
+}
+
+
+.CALENDAR h1{
+    color: var(--dark);
+    text-align: center;
+    
+}
+/* calendar */
+
+
+        .CALENDAR {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: auto
+            margin: 0;
+            background: transparent;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        
+        .calendar-container {
+          
+            width: 100%;
+            max-width: 1024px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background-color: #4a6fa5;
+            color: white;
+        }
+        
+        .month-year {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .nav-button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .nav-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            background-color: #e9ecef;
+            padding: 8px 0;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+        }
+        
+        .calendar-day {
+            position: relative;
+            height: 80px;
+            border: 1px solid #e9ecef;
+            padding: 5px;
+            text-align: right;
+        }
+        
+        .calendar-day.empty {
+            background-color: #f8f9fa;
+        }
+        
+        .day-number {
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        
+        .event-dot {
+            position: absolute;
+            left: 5px;
+            top: 5px;
+            width: 8px;
+            height: 8px;
+            background-color: #e74c3c;
+            border-radius: 50%;
+        }
+        
+        .event-preview {
+            text-align: left;
+            font-size: 11px;
+            color: #555;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: pointer;
+        }
+        
+        .event-tooltip {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            padding: 12px;
+            z-index: 100;
+            width: 220px;
+            max-width: 90vw;
+            display: none;
+            pointer-events: none;
+        }
+        
+        .event-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: #4a6fa5;
+        }
+        
+        .event-time {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        
+        .event-description {
+            font-size: 14px;
+            color: #333;
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 1024px) {
+            .calendar-day {
+                height: 70px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .calendar-day {
+                height: 60px;
+                padding: 4px;
+            }
+            
+            .event-preview {
+                font-size: 10px;
+            }
+            
+            .weekdays {
+                font-size: 14px;
+            }
+        }
+        
+        @media (max-width: 425px) {
+            .calendar-day {
+                height: 50px;
+                padding: 3px;
+            }
+            
+            .day-number {
+                font-size: 12px;
+            }
+            
+            .event-preview {
+                font-size: 0; /* Hide text on small screens */
+            }
+            
+            .month-year {
+                font-size: 18px;
+            }
+            
+            .weekdays {
+                font-size: 12px;
+            }
+            
+            .nav-button {
+                font-size: 16px;
+                padding: 3px 8px;
+            }
+        }
+        
+        @media (max-width: 375px) {
+            .calendar-day {
+                height: 45px;
+                padding: 2px;
+            }
+            
+            .weekdays {
+                font-size: 10px;
+                padding: 5px 0;
+            }
+            
+            .month-year {
+                font-size: 16px;
+            }
+        }
+        
+        @media (max-width: 320px) {
+            .calendar-day {
+                height: 40px;
+                padding: 2px;
+            }
+            
+            .day-number {
+                font-size: 11px;
+                margin-bottom: 1px;
+            }
+            
+            .event-dot {
+                width: 6px;
+                height: 6px;
+                top: 3px;
+                left: 3px;
+            }
+            
+            .weekdays {
+                font-size: 9px;
+            }
+            
+            .calendar-header {
+                padding: 10px;
+            }
+            
+            .month-year {
+                font-size: 14px;
+            }
+            
+            .nav-button {
+                font-size: 14px;
+                padding: 2px 6px;
+            }
+        }
+
+        /*newsletter*/
+       
+       
+        
+       
+        
+        .NEWSLETTER {
+            background: transparent;
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            min-height: auto;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .NEWSLETTER h1 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Newsletter signup */
+        .newsletter {
+            background-color: var(--primary);
+            color: white;
+            padding: 2.5rem;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+        
+        .newsletter h2 {
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+        
+        .newsletter p {
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            font-size: 1.1rem;
+        }
+        
+        .newsletter-form {
+            display: flex;
+            max-width: 500px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+        }
+        
+        .newsletter-form input {
+            flex: 1;
+            min-width: 250px;
+            padding: 1rem;
+            border: none;
+            border-radius: 4px 0 0 4px;
+            font-size: 1rem;
+        }
+        
+        .newsletter-form button {
+            background-color: var(--accent);
+            color: var(--dark);
+            font-weight: bold;
+            padding: 1rem 1.8rem;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .newsletter-form button:hover {
+            background-color: #e9ac6e;
+        }
+        
+        .church-name {
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        /* Mobile responsive styles */
+        @media (max-width: 600px) {
+            .newsletter {
+                padding: 2rem 1.5rem;
+            }
+            
+            .newsletter-form {
+                flex-direction: column;
+            }
+            
+            .newsletter-form input {
+                border-radius: 4px;
+                margin-bottom: 1rem;
+                width: 100%;
+            }
+            
+            .newsletter-form button {
+                border-radius: 4px;
+                width: 100%;
+            }
+        }
+   /*footer */
+   .FOOTER {
+    background-color: var(--light);
+    color: var(--dark);
+    line-height: 1.6;
+}
+
+/* Footer styles */
+footer {
+    background-color: var(--footer-bg);
+    color: var(--footer-text);
+    padding: 3rem 1rem;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.footer-section h3 {
+    font-size: 1.3rem;
+    margin-bottom: 1.2rem;
+    color: white;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.5rem;
+    display: inline-block;
+}
+
+.footer-section p {
+    margin-bottom: 0.7rem;
+}
+
+.footer-section ul {
+    list-style: none;
+}
+
+.footer-section ul li {
+    margin-bottom: 0.5rem;
+}
+
+.footer-section a {
+    color: var(--footer-text);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-section a:hover {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+/* Contact info */
+.contact-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.7rem;
+}
+
+.contact-info i {
+    margin-right: 0.5rem;
+    color: var(--accent);
+    width: 20px;
+    text-align: center;
+}
+
+/* Map container */
+.map-container {
+    width: 100%;
+    height: 200px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 1rem;
+}
+
+/* Social icons */
+.social-icons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.social-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+.social-icon:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Bottom section */
+.footer-bottom {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+}
+
+.footer-bottom p {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.developer-info {
+    margin-top: 0.5rem;
+    font-style: italic;
+    font-size: 0.85rem;
+}
+
+.developer-link {
+    color: var(--accent);
+    font-weight: 500;
+}
+
+.developer-link:hover {
+    text-decoration: underline;
+}
+
+/* Quick links grid */
+.quick-links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+}
+
+/* Service times */
+.service-time {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px dotted rgba(255, 255, 255, 0.1);
+    padding-bottom: 0.5rem;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .footer-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .quick-links {
+        grid-template-columns: 1fr;
+    }
+}   </style>
+</head>
+<body>
+  <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="logo">
+                <i class="fas fa-church logo-icon"></i>
+                <span class="logo-text">St Bernadette</span>
+            </a>
+            
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <ul class="nav-links">
+                <button class="close-menu">
+                    <i class="fas fa-times"></i>
+                </button>
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link active">Home</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="visit.html" class="nav-link dropdown-toggle">
+                        Visit <span class="dropdown-chevron"><i class="fas fa-chevron-down"></i></span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a href="contact.html" class="dropdown-item">Contact</a>
+                        <a href="aboutus.html" class="dropdown-item">About Us</a>
+                        <a href="join.html" class="dropdown-item">Join</a>
+                        <a href="prayerrequest.html" class="dropdown-item">Prayer Request</a>
+                        <a href="history.html" class="dropdown-item">History</a>
+                        <a href="#" class="dropdown-item">Get Updates</a>
+
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="events.html" class="nav-link active">Events</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="communities.html" class="nav-link dropdown-toggle">
+                        Communities<span class="dropdown-chevron"><i class="fas fa-chevron-down"></i></span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a href="#" class="dropdown-item">Jumuiyas</a>
+                        <a href="#" class="dropdown-item">P.M.C</a>
+                        <a href="youth.html" class="dropdown-item">Youth</a>
+                        <a href="#" class="dropdown-item">CWA</a>
+                        <a href="#" class="dropdown-item">CMA</a>
+                        <a href="#" class="dropdown-item">Choir</a>
+
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="sacrament.html" class="nav-link dropdown-toggle">
+                        Sacraments <span class="dropdown-chevron"><i class="fas fa-chevron-down"></i></span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <a href="baptism.html" class="dropdown-item">Baptism</a>
+                        <a href="#" class="dropdown-item">Holy Ministry</a>
+                        <a href="#" class="dropdown-item">Confirmation</a>
+                        <a href="#" class="dropdown-item">Anointing Of The Sick</a>
+                        <a href="#" class="dropdown-item">Reconciliation</a>
+                        <a href="#" class="dropdown-item">Matrimony</a>
+                        <a href="#" class="dropdown-item">Funeral Planning</a>
+                        <a href="#" class="dropdown-item">OCIA Program</a>
+                        <a href="#" class="dropdown-item">Holy Orders</a>
+
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="serve.html" class="nav-link">Serve</a>
+                </li>
+                <li class="nav-item">
+                    <a href="reflect.html" class="nav-link">Reflect</a>
+                </li>
+                <li class="nav-item">
+                    <a href="contribute.html" class="nav-link">Contribute</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <!-- Overlay for mobile menu -->
+    <div class="menu-overlay"></div>
+  <main id="main-content" class="main-content">
+        <section class="hero">
+            <div class="hero-content">
+                <h2>St Bernadette Catholic Church</h2>
+                <p>A place of worship, community, and spiritual growth where everyone is welcome. Join us as we grow in faith and love together.</p>
+                <button class="hero-btn">Join Our Parish</button>
+            </div>
+            <div class="scroll-indicator">
+                <span>Scroll</span>
+                <div class="scroll-line"></div>
+            </div>
+        </section>
+
+        <!-- Mass Times section -->
+        <section class="content-section">
+            <h2>Mass Times</h2>
+            <div class="mass-times">
+                <div class="mass-time-card">
+                    <h3>Weekday Masses</h3>
+                    <p>Monday - Friday: 8:30am</p>
+                    <p>Saturday: 9:00am</p>
+                </div>
+                <div class="mass-time-card">
+                    <h3>Weekend Masses</h3>
+                    <p>Saturday Vigil: 5:00pm</p>
+                    <p>Sunday: 8:00am, 10:00am, 12:00pm</p>
+                </div>
+                <div class="mass-time-card">
+                    <h3>Holy Days</h3>
+                    <p>Vigil: 7:00pm</p>
+                    <p>Holy Day: 8:30am, 12:10pm, 7:00pm</p>
+                </div>
+                <div class="mass-time-card">
+                    <h3>Confessions</h3>
+                    <p>Saturday: 3:30pm - 4:30pm</p>
+                    <p>Or by appointment</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="youtube-section">
+            <div class="youtube-section-content">
+                <div class="video-container">
+                    <iframe class="video" src="https://www.youtube.com/embed/f-dn6ZKCn-4?si=0rgALmZzr-QKz7R4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                </div>
+                <div class="video-description">
+                    <h3>The Parable of the Good Samaritan</h3>
+                    <p class="sermon-date">May 5, 2025 | Father Michael Johnson</p>
+                    <p>In this week's sermon, Father Michael explores the timeless message of compassion and service to others through the Parable of the Good Samaritan.</p>
+                    <a href="#" class="youtube-btn">View All Sermons</a>
+                </div>
+            </div>
+        </section>
+         <div class="CALENDAR">
+  <div class="calendar-container">
+    <h1>Parish Calendar</h1>
+    <div class="calendar-header">
+        <button id="prev-month" class="nav-button">&lt;</button>
+        <div id="month-year" class="month-year">May 2025</div>
+        <button id="next-month" class="nav-button">&gt;</button>
+    </div>
+    
+    <div class="weekdays">
+        <div>Sun</div>
+        <div>Mon</div>
+        <div>Tue</div>
+        <div>Wed</div>
+        <div>Thu</div>
+        <div>Fri</div>
+        <div>Sat</div>
+    </div>
+    
+    <div id="calendar-grid" class="calendar-grid">
+        <!-- Days will be generated by JavaScript -->
+    </div>
+</div>
+
+<div id="event-tooltip" class="event-tooltip">
+    <div id="event-title" class="event-title"></div>
+    <div id="event-time" class="event-time"></div>
+    <div id="event-description" class="event-description"></div>
+</div>
+           </div>
+<div class="NEWSLETTER">
+           <section class="newsletter">
+            <h2>Stay Updated</h2>
+            <p>Sign up for our weekly newsletter to receive updates about upcoming events, service times, and announcements.</p>
+            <form class="newsletter-form">
+                <input type="email" placeholder="Your email address" required>
+                <button type="submit">Subscribe</button>
+            </form>
+            <div class="church-name">St Bernadette Church</div>
+        </section>
+      </div>
+
+      <div class="FOOTER">
+        <footer>
+          <div class="footer-container">
+              <!-- About section -->
+              <div class="footer-section">
+                  <h3>About Us</h3>
+                  <p>St Bernadette Church is a welcoming and inclusive community of faith, dedicated to serving God and our neighbors in love and compassion.</p>
+                  <div class="social-icons">
+                      <a href="#" class="social-icon" aria-label="Facebook">
+                          <i class="fab fa-facebook-f"></i>
+                      </a>
+                      <a href="#" class="social-icon" aria-label="Twitter">
+                          <i class="fab fa-twitter"></i>
+                      </a>
+                      <a href="#" class="social-icon" aria-label="Instagram">
+                          <i class="fab fa-instagram"></i>
+                      </a>
+                      <a href="#" class="social-icon" aria-label="YouTube">
+                          <i class="fab fa-youtube"></i>
+                      </a>
+                  </div>
+              </div>
+              
+              <!-- Contact section -->
+              <div class="footer-section">
+                  <h3>Contact Us</h3>
+                  <div class="contact-info">
+                      <i class="fas fa-map-marker-alt"></i>
+                      <p>123 Thika, Ngoingwa, KE 90210</p>
+                  </div>
+                  <div class="contact-info">
+                      <i class="fas fa-phone"></i>
+                      <p>(555) 123-4567</p>
+                  </div>
+                  <div class="contact-info">
+                      <i class="fas fa-envelope"></i>
+                      <p>info@st bernadettechurch.org</p>
+                  </div>
+                  <div class="map-container">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4608.885308770074!2d37.04422395523386!3d-1.0418612240776763!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f4eb686ce02fd%3A0xb2829857532202be!2sSt%20Bernadette%20Catholic%20Church%20Ngoingwa!5e0!3m2!1sen!2ske!4v1745156036236!5m2!1sen!2ske" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                  </div>
+              </div>
+              
+              <!-- Quick Links section -->
+              <div class="footer-section">
+                  <h3>Quick Links</h3>
+                  <div class="quick-links">
+                      <ul>
+                          <li><a href="#"><i class="fas fa-angle-right"></i> Home</a></li>
+                          <li><a href="#"><i class="fas fa-angle-right"></i> About</a></li>
+                          <li><a href="#"><i class="fas fa-angle-right"></i> Events</a></li>
+                          <li><a href="#"><i class="fas fa-angle-right"></i> Sermons</a></li>
+                      </ul>
+                      <ul>
+                          <li><a href="#"><i class="fas fa-angle-right"></i> Ministries</a></li>
+                          <li><a href="#"><i class="fas fa-angle-right"></i> Give</a></li>
+                          <li><a href="#"><i class="fas fa-angle-right"></i> Gallery</a></li>
+                          <li><a href="#"><i class="fas fa-angle-right"></i> Contact</a></li>
+                      </ul>
+                  </div>
+              </div>
+              
+              <!-- Service Times section -->
+              <div class="footer-section">
+                  <h3>Service Times</h3>
+                  <div class="service-time">
+                      <span>Sunday Morning:</span>
+                      <span>9:00 AM</span>
+                  </div>
+                  <div class="service-time">
+                      <span>Sunday Evening:</span>
+                      <span>11:00 AM</span>
+                  </div>
+                  <div class="service-time">
+                      <span>Wednesday Bible Study:</span>
+                      <span>7:00 PM</span>
+                  </div>
+                  <div class="service-time">
+                      <span>Youth Group (Friday):</span>
+                      <span>6:30 PM</span>
+                  </div>
+                  <p style="margin-top: 1rem;">Join us online or in person!</p>
+                  <a href="#" style="color: var(--accent);">View Full Schedule</a>
+              </div>
+          </div>
+          
+          <!-- Bottom section with copyright and developer info -->
+          <div class="footer-bottom">
+              <p>&copy; 2025 St Bernadette Catholic Church. All rights reserved.</p>
+              <div class="developer-info">
+                  <p>For website support: webmaster@stbernadettechurch.org</p>
+              </div>
+          </div>
+      </footer>
+      </div>
+    </main>
+    <!-- NavBar Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Register ScrollTrigger plugin
+            gsap.registerPlugin(ScrollTrigger);
+            
+            // Navbar scroll effect with debouncing
+            const navbar = document.querySelector('.navbar');
+            let scrollTimer;
+            
+            // Initial check on page load
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            }
+            
+            window.addEventListener('scroll', () => {
+                // Clear the previous timer
+                clearTimeout(scrollTimer);
+                
+                // Set a new timer
+                scrollTimer = setTimeout(() => {
+                    if (window.scrollY > 50) {
+                        navbar.classList.add('scrolled');
+                    } else {
+                        navbar.classList.remove('scrolled');
+                    }
+                }, 10); // Small delay for better performance
+            });
+            
+            // Navbar animations with GSAP
+            gsap.from('.navbar', {
+                y: -100,
+                opacity: 0,
+                duration: 1,
+                ease: 'power3.out',
+                delay: 0.2,
+                clearProps: 'all' // Clean up after animation
+            });
+            
+            // Mobile menu elements
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const closeMenuBtn = document.querySelector('.close-menu');
+            const navLinks = document.querySelector('.nav-links');
+            const overlay = document.querySelector('.menu-overlay');
+            const dropdowns = document.querySelectorAll('.dropdown');
+            
+            // Open mobile menu
+            mobileMenuBtn.addEventListener('click', () => {
+                navLinks.classList.add('active');
+                overlay.classList.add('active');
+                document.querySelector('.mobile-menu-btn').style.visibility = 'hidden';
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            });
+            
+            // Close mobile menu function
+            const closeMenu = () => {
+                navLinks.classList.remove('active');
+                overlay.classList.remove('active');
+                document.querySelector('.mobile-menu-btn').style.visibility = 'visible';
+                document.body.style.overflow = ''; // Re-enable scrolling
+            };
+            
+            // Close menu events
+            closeMenuBtn.addEventListener('click', closeMenu);
+            overlay.addEventListener('click', closeMenu);
+            
+            // Handle dropdowns
+            dropdowns.forEach(dropdown => {
+                const dropdownToggle = dropdown.querySelector('.dropdown-toggle');
+                const dropdownChevron = dropdown.querySelector('.dropdown-chevron');
+                
+                // Only for mobile
+                if (window.innerWidth <= 768) {
+                    // Make the main link navigate and chevron toggle dropdown
+                    dropdownChevron.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        // Close other open dropdowns
+                        dropdowns.forEach(otherDropdown => {
+                            if (otherDropdown !== dropdown && otherDropdown.classList.contains('active')) {
+                                otherDropdown.classList.remove('active');
+                            }
+                        });
+                        
+                        // Toggle current dropdown
+                        dropdown.classList.toggle('active');
+                        
+                        // Rotate chevron
+                        const icon = dropdownChevron.querySelector('i');
+                        if (dropdown.classList.contains('active')) {
+                            icon.style.transform = 'rotate(180deg)';
+                        } else {
+                            icon.style.transform = 'rotate(0)';
+                        }
+                    });
+                }
+            });
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                if (window.innerWidth > 768) {
+                    // Reset mobile menu state when switching to desktop
+                    navLinks.classList.remove('active');
+                    overlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                    
+                    // Reset all dropdowns
+                    dropdowns.forEach(dropdown => {
+                        dropdown.classList.remove('active');
+                        const icon = dropdown.querySelector('.dropdown-chevron i');
+                        if (icon) icon.style.transform = 'rotate(0)';
+                    });
+                }
+            });
+        });
+    </script>
+ <!-- Hero Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Register ScrollTrigger plugin
+            gsap.registerPlugin(ScrollTrigger);
+            
+            // Hero animations
+            const heroTimeline = gsap.timeline({ delay: 0.5 });
+            heroTimeline.to('.hero h2', { opacity: 1, y: 0, duration: 1.2, ease: 'power3.out' })
+                .to('.hero p', { opacity: 1, y: 0, duration: 1, ease: 'power3.out' }, '-=0.7')
+                .to('.hero-btn', { opacity: 1, y: 0, duration: 1, ease: 'power3.out' }, '-=0.7')
+                .to('.scroll-indicator', { opacity: 1, duration: 1, ease: 'power3.out' }, '-=0.5');
+            
+            // Mass Times section animations
+            gsap.to('.content-section h2::after', {
+                scrollTrigger: {
+                    trigger: '.content-section h2',
+                    start: 'top 80%',
+                    toggleClass: {targets: '.content-section h2', className: 'active'},
+                    once: true
+                }
+            });
+            
+            gsap.to('.mass-time-card', {
+                scrollTrigger: {
+                    trigger: '.mass-times',
+                    start: 'top 80%',
+                },
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                stagger: 0.2,
+                ease: 'power3.out'
+            });
+            
+            // YouTube section animations
+            gsap.to('.youtube-section h2::after', {
+                scrollTrigger: {
+                    trigger: '.youtube-section h2',
+                    start: 'top 80%',
+                    toggleClass: {targets: '.youtube-section h2', className: 'active'},
+                    once: true
+                }
+            });
+            
+            gsap.to('.video-container', {
+                scrollTrigger: {
+                    trigger: '.youtube-section',
+                    start: 'top 70%',
+                },
+                opacity: 1,
+                x: 0,
+                duration: 1,
+                ease: 'power3.out'
+            });
+            
+            gsap.to('.video-description', {
+                scrollTrigger: {
+                    trigger: '.youtube-section',
+                    start: 'top 70%',
+                },
+                opacity: 1,
+                x: 0,
+                duration: 1,
+                delay: 0.3,
+                ease: 'power3.out'
+            });
+            
+            // Parallax effect for hero section
+            gsap.to('.hero', {
+                scrollTrigger: {
+                    trigger: '.hero',
+                    start: 'top top',
+                    end: 'bottom top',
+                    scrub: true
+                },
+                backgroundPosition: '50% 100%',
+                ease: 'none'
+            });
+        });
+    </script>
+    <!-- Calendar Script  -->
+  <script >
+// Events data - normally this would come from a database
+const events = {
+    "2025-05-05": { title: "Team Meeting", time: "10:00 AM", description: "Discuss quarterly goals and project timelines" },
+    "2025-05-10": { title: "Product Launch", time: "2:00 PM", description: "Release of new product line with press conference" },
+    "2025-05-15": { title: "Client Presentation", time: "11:30 AM", description: "Present project progress to key stakeholders" },
+    "2025-05-20": { title: "Training Workshop", time: "9:00 AM - 4:00 PM", description: "Full-day training on new software implementation" },
+    "2025-05-25": { title: "Board Meeting", time: "3:00 PM", description: "Monthly review with board of directors" },
+    "2025-06-02": { title: "Conference", time: "All Day", description: "Annual industry conference in Chicago" },
+    "2025-06-15": { title: "Team Building", time: "2:00 PM", description: "Afternoon team building activities and dinner" },
+    "2025-06-22": { title: "Project Deadline", time: "5:00 PM", description: "Final submission for Q2 project deliverables" },
+    "2025-04-10": { title: "Budget Review", time: "1:00 PM", description: "Review Q2 budget allocations" },
+    "2025-04-18": { title: "Department Lunch", time: "12:00 PM", description: "Team lunch at La Trattoria restaurant" }
+};
+
+// Calendar state
+let currentDate = new Date();
+let currentMonth = 4; // Start with May (month is 0-indexed in JavaScript)
+let currentYear = 2025;
+
+// DOM elements
+const calendarGrid = document.getElementById('calendar-grid');
+const monthYearElement = document.getElementById('month-year');
+const prevButton = document.getElementById('prev-month');
+const nextButton = document.getElementById('next-month');
+const eventTooltip = document.getElementById('event-tooltip');
+
+// Month names
+const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                   'July', 'August', 'September', 'October', 'November', 'December'];
+
+// Initialize calendar
+function initCalendar() {
+    renderCalendar();
+    
+    // Event listeners for navigation
+    prevButton.addEventListener('click', () => {
+        currentMonth--;
+        if (currentMonth < 0) {
+            currentMonth = 11;
+            currentYear--;
+        }
+        renderCalendar();
+    });
+    
+    nextButton.addEventListener('click', () => {
+        currentMonth++;
+        if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear++;
+        }
+        renderCalendar();
+    });
+    
+    // Handle tooltip positioning and hide when not hovering
+    document.addEventListener('mousemove', (e) => {
+        // Adjust tooltip position based on available space
+        const tooltipWidth = eventTooltip.offsetWidth;
+        const tooltipHeight = eventTooltip.offsetHeight;
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        
+        let left = e.pageX + 15;
+        let top = e.pageY + 15;
+        
+        // Check if tooltip goes beyond right edge
+        if (left + tooltipWidth > viewportWidth - 10) {
+            left = e.pageX - tooltipWidth - 15;
+        }
+        
+        // Check if tooltip goes beyond bottom edge
+        if (top + tooltipHeight > viewportHeight - 10) {
+            top = e.pageY - tooltipHeight - 15;
+        }
+        
+        eventTooltip.style.top = top + 'px';
+        eventTooltip.style.left = left + 'px';
+    });
+    
+    // Handle touch events for mobile devices
+    document.addEventListener('touchstart', handleTouchStart, false);
+    document.addEventListener('touchmove', handleTouchMove, false);
+}
+
+// Touch handling for swipe navigation
+let xDown = null;
+let yDown = null;
+
+function handleTouchStart(evt) {
+    xDown = evt.touches[0].clientX;
+    yDown = evt.touches[0].clientY;
+}
+
+function handleTouchMove(evt) {
+    if (!xDown || !yDown) {
+        return;
+    }
+    
+    const xUp = evt.touches[0].clientX;
+    const yUp = evt.touches[0].clientY;
+    const xDiff = xDown - xUp;
+    const yDiff = yDown - yUp;
+    
+    // Only respond to horizontal swipes
+    if (Math.abs(xDiff) > Math.abs(yDiff)) {
+        if (xDiff > 10) {
+            // Swipe left - next month
+            nextButton.click();
+        } else if (xDiff < -10) {
+            // Swipe right - previous month
+            prevButton.click();
+        }
+    }
+    
+    // Reset values
+    xDown = null;
+    yDown = null;
+}
+
+// Render the calendar grid
+function renderCalendar() {
+    // Update header
+    monthYearElement.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+    
+    // Clear grid
+    calendarGrid.innerHTML = '';
+    
+    // Calculate first day of month and days in month
+    const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    
+    // Create empty cells for days before first day of month
+    for (let i = 0; i < firstDay; i++) {
+        const emptyDay = document.createElement('div');
+        emptyDay.className = 'calendar-day empty';
+        calendarGrid.appendChild(emptyDay);
+    }
+    
+    // Create cells for each day in month
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dayElement = document.createElement('div');
+        dayElement.className = 'calendar-day';
+        
+        // Add day number
+        const dayNumber = document.createElement('div');
+        dayNumber.className = 'day-number';
+        dayNumber.textContent = day;
+        dayElement.appendChild(dayNumber);
+        
+        // Check if there's an event for this day
+        const dateString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        
+        if (events[dateString]) {
+            // Add event dot indicator
+            const eventDot = document.createElement('div');
+            eventDot.className = 'event-dot';
+            dayElement.appendChild(eventDot);
+            
+            // Add event preview
+            const eventPreview = document.createElement('div');
+            eventPreview.className = 'event-preview';
+            eventPreview.textContent = events[dateString].title;
+            dayElement.appendChild(eventPreview);
+            
+            // Add event functionality for both hover and touch
+            const showEvent = () => {
+                // Populate tooltip
+                document.getElementById('event-title').textContent = events[dateString].title;
+                document.getElementById('event-time').textContent = events[dateString].time;
+                document.getElementById('event-description').textContent = events[dateString].description;
+                
+                // Show tooltip
+                eventTooltip.style.display = 'block';
+            };
+            
+            const hideEvent = () => {
+                // Hide tooltip
+                eventTooltip.style.display = 'none';
+            };
+            
+            // Mouse events
+            dayElement.addEventListener('mouseenter', showEvent);
+            dayElement.addEventListener('mouseleave', hideEvent);
+            
+            // Touch events
+            dayElement.addEventListener('touchstart', (e) => {
+                // Hide any previously shown tooltips
+                eventTooltip.style.display = 'none';
+                
+                // Show this event tooltip
+                showEvent();
+                
+                // Position tooltip near the touch point
+                const touch = e.touches[0];
+                let left = touch.pageX - 110; // Center the tooltip
+                const top = touch.pageY + 30;
+                
+                // Ensure tooltip stays within viewport
+                if (left < 10) left = 10;
+                if (left > window.innerWidth - 230) left = window.innerWidth - 230;
+                
+                eventTooltip.style.left = left + 'px';
+                eventTooltip.style.top = top + 'px';
+                
+                // Prevent default to avoid triggering other events
+                e.preventDefault();
+            });
+            
+            // Close tooltip when touching elsewhere
+            document.addEventListener('touchstart', (e) => {
+                if (!dayElement.contains(e.target) && !eventTooltip.contains(e.target)) {
+                    hideEvent();
+                }
+            });
+        }
+        
+        calendarGrid.appendChild(dayElement);
+    }
+    
+    // Mark today if viewing current month
+    const today = new Date();
+    if (today.getMonth() === currentMonth && today.getFullYear() === currentYear) {
+        const todayCell = calendarGrid.children[firstDay + today.getDate() - 1];
+        if (todayCell) {
+            todayCell.style.backgroundColor = 'rgba(74, 111, 165, 0.1)';
+            todayCell.style.border = '2px solid #4a6fa5';
+        }
+    }
+}
+
+// Add meta viewport for better mobile experience
+if (!document.querySelector('meta[name="viewport"]')) {
+    const metaViewport = document.createElement('meta');
+    metaViewport.name = 'viewport';
+    metaViewport.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+    document.head.appendChild(metaViewport);
+}
+
+// Start the calendar
+initCalendar();
+</script>
+  </body>
+</html>
+<!-- </html> -->

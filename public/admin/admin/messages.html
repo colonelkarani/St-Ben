@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Church Admin Dashboard – Messages</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #2d3748;
+      --accent: #4fd1c5;
+      --bg: #f7fafc;
+      --card-bg: #fff;
+      --shadow: 0 4px 20px rgba(0,0,0,0.07);
+      --radius: 14px;
+      --nav-height: 60px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    nav.navbar {
+      position: sticky;
+      top: 0;
+      background: var(--card-bg);
+      box-shadow: var(--shadow);
+      height: var(--nav-height);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      z-index: 1000;
+    }
+    nav .logo {
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: var(--accent);
+      letter-spacing: 1.2px;
+      user-select: none;
+    }
+    nav .nav-links {
+      display: flex;
+      gap: 1.2rem;
+    }
+    nav .nav-links a {
+      text-decoration: none;
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.5em 0.8em;
+      border-radius: 8px;
+      transition: background 0.25s, color 0.25s;
+      user-select: none;
+    }
+    nav .nav-links a:hover,
+    nav .nav-links a.active {
+      background: var(--accent);
+      color: #222;
+    }
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      width: 26px;
+      height: 20px;
+      justify-content: space-between;
+      user-select: none;
+    }
+    .hamburger span {
+      display: block;
+      height: 3px;
+      background: var(--primary);
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+    @media (max-width: 768px) {
+      nav .nav-links {
+        position: fixed;
+        top: var(--nav-height);
+        right: 0;
+        background: var(--card-bg);
+        flex-direction: column;
+        width: 220px;
+        height: calc(100vh - var(--nav-height));
+        padding-top: 1rem;
+        box-shadow: -4px 0 12px rgba(0,0,0,0.06);
+        transform: translateX(100%);
+        transition: transform 0.35s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        overflow-y: auto;
+        align-items: flex-start;
+        padding-left: 2rem;
+      }
+      nav .nav-links.active {
+        transform: translateX(0);
+      }
+      nav .nav-links a {
+        padding: 0.75em 0;
+      }
+      .hamburger {
+        display: flex;
+      }
+    }
+    .main-content {
+      flex: 1;
+      padding: 1rem 1.5rem 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .dashboard-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      letter-spacing: -0.8px;
+      color: var(--primary);
+    }
+    .section-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.5rem 2rem;
+      margin-bottom: 2rem;
+    }
+    .section-card h2 {
+      font-size: 1.3rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+    }
+    .messages-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      border-top: 1px solid #e2e8f0;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .messages-list li {
+      padding: 1rem 0;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4em;
+    }
+    .messages-list li:last-child {
+      border-bottom: none;
+    }
+    .msg-header {
+      font-weight: 600;
+      color: #2b6cb0;
+      display: flex;
+      align-items: center;
+      gap: 0.7em;
+    }
+    .msg-meta {
+      font-size: 0.92em;
+      color: #718096;
+    }
+    .msg-body {
+      color: #222;
+      font-size: 1.03em;
+      margin-top: 0.2em;
+      margin-bottom: 0.3em;
+    }
+    .delete-btn {
+      align-self: flex-end;
+      background: none;
+      color: #e53e3e;
+      border: none;
+      font-size: 1.1rem;
+      cursor: pointer;
+      margin-left: 0.7em;
+      transition: color 0.2s;
+    }
+    .delete-btn:hover {
+      color: #c53030;
+    }
+    /* Responsive */
+    @media (max-width: 600px) {
+      .dashboard-title {
+        font-size: 1.5rem;
+      }
+      .section-card {
+        padding: 1rem 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="#" class="logo">St Bernadette Admin</a>
+    <div class="hamburger" aria-label="Toggle navigation menu" role="button" tabindex="0">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <div class="nav-links">
+      <a href="announcements.html">Announcements</a>
+      <a href="events.html">Events</a>
+      <a href="communities.html">Communities</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="contact.html">Contact Info</a>
+      <a href="messages.html" class="active">Messages</a>
+    </div>
+  </nav>
+  <main class="main-content" role="main">
+    <h1 class="dashboard-title">📥 Messages</h1>
+
+    <section class="section-card" aria-labelledby="messages-title">
+      <h2 id="messages-title">Inbox</h2>
+      <ul class="messages-list" id="messages-list" aria-live="polite" aria-relevant="all"></ul>
+    </section>
+  </main>
+  <script>
+    // Hamburger Menu toggle
+    const hamburger = document.querySelector('.hamburger');
+    const navLinks = document.querySelector('.nav-links');
+    hamburger.addEventListener('click', () => navLinks.classList.toggle('active'));
+    hamburger.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        navLinks.classList.toggle('active');
+      }
+    });
+
+    // Demo messages in localStorage
+    const STORAGE_KEY = 'church_messages';
+    let messages = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
+      {
+        name: "Jane Doe",
+        email: "jane@example.com",
+        date: new Date().toLocaleString(),
+        body: "Hello, I would like to know more about the youth programs."
+      },
+      {
+        name: "John Smith",
+        email: "john.smith@example.com",
+        date: new Date().toLocaleString(),
+        body: "Thank you for organizing the recent event. It was a blessing!"
+      }
+    ];
+
+    const messagesList = document.getElementById('messages-list');
+
+    function renderMessages() {
+      messagesList.innerHTML = '';
+      if (messages.length === 0) {
+        messagesList.innerHTML = '<li style="color:#999;font-style:italic;">No messages yet.</li>';
+        return;
+      }
+      messages.forEach((msg, i) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <div class="msg-header">${msg.name} <span class="msg-meta">&lt;${msg.email}&gt; • ${msg.date}</span></div>
+          <div class="msg-body">${msg.body}</div>
+          <button class="delete-btn" title="Delete message" aria-label="Delete message">🗑️</button>
+        `;
+        li.querySelector('.delete-btn').onclick = () => {
+          if (confirm('Delete this message?')) {
+            messages.splice(i, 1);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+            renderMessages();
+          }
+        };
+        messagesList.appendChild(li);
+      });
+    }
+
+    renderMessages();
+  </script>
+</body>
+</html>

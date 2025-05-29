@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Church Admin Dashboard – Jumuiyas Members & Officials</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #2d3748;
+      --accent: #4fd1c5;
+      --bg: #f7fafc;
+      --card-bg: #fff;
+      --shadow: 0 4px 20px rgba(0,0,0,0.07);
+      --radius: 14px;
+      --nav-height: 60px;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    /* Navbar */
+    nav.navbar {
+      position: sticky;
+      top: 0;
+      background: var(--card-bg);
+      box-shadow: var(--shadow);
+      height: var(--nav-height);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      z-index: 1000;
+    }
+    nav .logo {
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: var(--accent);
+      letter-spacing: 1.2px;
+      user-select: none;
+    }
+    nav .nav-links {
+      display: flex;
+      gap: 1.2rem;
+      align-items: center;
+      position: relative;
+    }
+    nav .nav-links a {
+      text-decoration: none;
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.5em 0.8em;
+      border-radius: 8px;
+      transition: background 0.25s, color 0.25s;
+      user-select: none;
+    }
+    nav .nav-links a:hover,
+    nav .nav-links a.active {
+      background: var(--accent);
+      color: #222;
+    }
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      width: 26px;
+      height: 20px;
+      justify-content: space-between;
+      user-select: none;
+    }
+    .hamburger span {
+      display: block;
+      height: 3px;
+      background: var(--primary);
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+    /* Mobile Nav */
+    @media (max-width: 768px) {
+      nav .nav-links {
+        position: fixed;
+        top: var(--nav-height);
+        right: 0;
+        background: var(--card-bg);
+        flex-direction: column;
+        width: 220px;
+        height: calc(100vh - var(--nav-height));
+        padding-top: 1rem;
+        box-shadow: -4px 0 12px rgba(0,0,0,0.06);
+        transform: translateX(100%);
+        transition: transform 0.35s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        overflow-y: auto;
+        align-items: flex-start;
+        padding-left: 2rem;
+      }
+      nav .nav-links.active {
+        transform: translateX(0);
+      }
+      nav .nav-links a {
+        padding: 0.75em 0;
+      }
+      .hamburger {
+        display: flex;
+      }
+    }
+    /* Members Dropdown */
+    .members-dropdown {
+      position: relative;
+      user-select: none;
+    }
+    .members-dropdown-button {
+      background: none;
+      border: none;
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--primary);
+      cursor: pointer;
+      padding: 0.5em 0.8em;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 0.3em;
+      transition: background 0.25s, color 0.25s;
+    }
+    .members-dropdown-button:hover {
+      background: var(--accent);
+      color: #222;
+    }
+    .members-dropdown-content {
+      display: none;
+      position: absolute;
+      top: 110%;
+      right: 0;
+      background: var(--card-bg);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      width: 320px;
+      max-height: 350px;
+      overflow-y: auto;
+      padding: 0.5rem 0;
+      z-index: 1500;
+      font-size: 0.9rem;
+      color: var(--primary);
+    }
+    .members-dropdown-content.active {
+      display: block;
+    }
+    .members-dropdown-content h4 {
+      margin: 0.5rem 1rem;
+      font-weight: 700;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 0.3rem;
+      background: #f0fdfa;
+      color: #2c7a7b;
+      user-select: none;
+    }
+    .member-item {
+      padding: 0.4rem 1rem;
+      cursor: pointer;
+      border-bottom: 1px solid #edf2f7;
+      user-select: none;
+    }
+    .member-item:last-child {
+      border-bottom: none;
+    }
+    .member-item:hover {
+      background: #bee3f8;
+      color: #2b6cb0;
+    }
+    /* Main content */
+    .main-content {
+      flex: 1;
+      padding: 1rem 1.5rem 2rem;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .dashboard-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      letter-spacing: -0.8px;
+      color: var(--primary);
+    }
+    /* Community selector */
+    .community-selector {
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.5em 0.7em;
+      border-radius: 8px;
+      border: 1.5px solid #cbd5e0;
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 320px;
+      cursor: pointer;
+      transition: border-color 0.3s;
+    }
+    .community-selector:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+    /* Section Card */
+    .section-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.5rem 1.8rem;
+      margin-bottom: 2rem;
+    }
+    .section-card h2 {
+      font-size: 1.3rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+    }
+    /* Lists */
+    ul.list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      max-height: 280px;
+      overflow-y: auto;
+      border-top: 1px solid #e2e8f0;
+    }
+    ul.list li {
+      padding: 0.8em 0;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1rem;
+      flex-wrap: wrap;
+    }
+    ul.list li:last-child {
+      border-bottom: none;
+    }
+    /* List item content */
+    .list-item-info {
+      flex: 1 1 60%;
+      min-width: 200px;
+    }
+    .list-item-actions {
+      flex: 0 0 auto;
+      display: flex;
+      gap: 0.6rem;
+    }
+    button.action-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      user-select: none;
+      padding: 0 0.3em;
+      color: var(--accent);
+      transition: color 0.2s;
+    }
+    button.action-btn.delete {
+      color: #e53e3e;
+    }
+    button.action-btn:hover {
+      color: #319795;
+    }
+    button.action-btn.delete:hover {
+      color: #c53030;
+    }
+    /* Forms */
+    form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem 1.5rem;
+      margin-top: 1rem;
+    }
+    form label {
+      font-weight: 600;
+      color: #718096;
+      font-size: 0.9rem;
+      grid-column: span 2;
+    }
+    form input,
+    form select,
+    form textarea {
+      padding: 0.6em;
+      border-radius: 8px;
+      border: 1.5px solid #e2e8f0;
+      font-size: 0.9rem;
+      font-family: inherit;
+      resize: vertical;
+      grid-column: span 2;
+    }
+    form textarea {
+      min-height: 60px;
+    }
+    form button {
+      background: var(--accent);
+      color: #222c36;
+      border: none;
+      font-weight: 700;
+      padding: 0.6em 1.4em;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      grid-column: span 2;
+      justify-self: start;
+      margin-top: 0.4em;
+      transition: background 0.2s;
+    }
+    form button:hover {
+      background: #38b2ac;
+    }
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.35);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      max-width: 420px;
+      width: 90%;
+      padding: 1.5rem 1.8rem;
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal h3 {
+      margin-top: 0;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+    .modal-buttons {
+      margin-top: 1rem;
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+    .modal-buttons button {
+      padding: 0.5em 1.2em;
+      border-radius: 8px;
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.9rem;
+      user-select: none;
+      transition: background 0.25s;
+    }
+    .btn-cancel {
+      background: #a0aec0;
+      color: white;
+    }
+    .btn-cancel:hover {
+      background: #718096;
+    }
+    .btn-save {
+      background: var(--accent);
+      color: #222c36;
+    }
+    .btn-save:hover {
+      background: #38b2ac;
+    }
+    /* Section titles inside modal */
+    .modal-section-title {
+      font-weight: 700;
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 0.3rem;
+    }
+    /* Responsive */
+    @media (max-width: 600px) {
+      .dashboard-title {
+        font-size: 1.5rem;
+      }
+      form {
+        grid-template-columns: 1fr;
+      }
+      form label,
+      form input,
+      form select,
+      form textarea,
+      form button {
+        grid-column: span 1;
+      }
+      .list-item-info {
+        flex-basis: 100%;
+        margin-bottom: 0.4rem;
+      }
+      .list-item-actions {
+        flex-basis: 100%;
+        justify-content: flex-start;
+        gap: 1rem;
+      }
+      .members-dropdown-content {
+        width: 90vw;
+        max-height: 50vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="#" class="logo">St Bernadette Admin</a>
+    <div class="hamburger" aria-label="Toggle navigation menu" role="button" tabindex="0">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <div class="nav-links">
+      <a href="announcements.html">Announcements</a>
+      <a href="events.html">Events</a>
+      <a href="communities.html" class="active">Communities</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="contact.html">Contact Info</a>
+      <a href="messages.html">Messages</a>
+      <div class="members-dropdown" tabindex="0" aria-haspopup="true" aria-expanded="false">
+        <button class="members-dropdown-button" aria-label="View all members">Members ▼</button>
+        <div class="members-dropdown-content" role="menu" aria-label="All members list"></div>
+      </div>
+    </div>
+  </nav>
+  <main class="main-content" role="main">
+    <h1 class="dashboard-title">👥 Communities - Manage Members & Officials</h1>
+
+    <!-- Community Selector -->
+    <label for="community-select" style="font-weight:600; margin-bottom:0.5rem; display:block;">Select Community</label>
+    <select id="community-select" class="community-selector" aria-label="Select community to manage"></select>
+
+    <!-- Community Info -->
+    <section class="section-card" aria-label="Community Information">
+      <h2>Community Information</h2>
+      <p><strong>Name:</strong> <span id="community-name-display"></span></p>
+      <p><strong>Location:</strong> <span id="community-location-display"></span></p>
+      <p><strong>Number of Members:</strong> <span id="community-members-count">0</span></p>
+      <p><strong>Total Members Across All Communities:</strong> <span id="total-members-count">0</span></p>
+    </section>
+
+    <!-- Officials Section -->
+    <section class="section-card" aria-labelledby="officials-title">
+      <h2 id="officials-title">Officials</h2>
+      <ul class="list" id="officials-list" aria-live="polite" aria-relevant="all"></ul>
+      <form id="officials-form" aria-label="Add new official">
+        <label for="official-name">Name</label>
+        <input type="text" id="official-name" placeholder="Official's name" required />
+        <label for="official-role">Role</label>
+        <input type="text" id="official-role" placeholder="Role or position" required />
+        <label for="official-contact">Contact Info</label>
+        <input type="text" id="official-contact" placeholder="Phone or email" />
+        <button type="submit">Add Official</button>
+      </form>
+    </section>
+
+    <!-- Members Section -->
+    <section class="section-card" aria-labelledby="members-title">
+      <h2 id="members-title">Members</h2>
+      <ul class="list" id="members-list" aria-live="polite" aria-relevant="all"></ul>
+      <form id="members-form" aria-label="Add new member">
+        <label for="member-name">Name</label>
+        <input type="text" id="member-name" placeholder="Member's name" required />
+        <label for="member-contact">Contact Info</label>
+        <input type="text" id="member-contact" placeholder="Phone or email" />
+        <label for="member-status">Status</label>
+        <select id="member-status" required>
+          <option value="">Select status</option>
+          <option value="Active">Active</option>
+          <option value="Inactive">Inactive</option>
+        </select>
+        <button type="submit">Add Member</button>
+      </form>
+    </section>
+  </main>
+
+  <!-- Edit Modal Template -->
+  <div class="modal-overlay" id="edit-modal" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title" tabindex="-1">
+    <div class="modal">
+      <h3 id="edit-modal-title">Edit</h3>
+      <form id="edit-form"></form>
+      <div class="modal-buttons">
+        <button type="button" class="btn-cancel" id="edit-cancel-btn">Cancel</button>
+        <button type="submit" class="btn-save" form="edit-form">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Hamburger Menu toggle
+    const hamburger = document.querySelector('.hamburger');
+    const navLinks = document.querySelector('.nav-links');
+    hamburger.addEventListener('click', () => navLinks.classList.toggle('active'));
+    hamburger.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        navLinks.classList.toggle('active');
+      }
+    });
+
+    // Fixed communities list (predefined)
+    const fixedCommunities = [
+      { id: 'c1', name: 'St. Mary\'s Jumuiya', location: 'Church Hall A' },
+      { id: 'c2', name: 'Youth Fellowship', location: 'Church Hall B' },
+      { id: 'c3', name: 'Women\'s Group', location: 'Community Room' },
+      { id: 'c4', name: 'Men\'s Fellowship', location: 'Church Lounge' },
+      { id: 'c5', name: 'Choir Group', location: 'Music Room' }
+    ];
+
+    // Storage keys
+    const STORAGE_KEYS = {
+      officials: 'church_jumuiya_officials',
+      members: 'church_jumuiya_members'
+    };
+
+    // DOM elements
+    const communitySelect = document.getElementById('community-select');
+    const communityNameDisplay = document.getElementById('community-name-display');
+    const communityLocationDisplay = document.getElementById('community-location-display');
+    const communityMembersCount = document.getElementById('community-members-count');
+    const totalMembersCount = document.getElementById('total-members-count');
+
+    const officialsList = document.getElementById('officials-list');
+    const officialsForm = document.getElementById('officials-form');
+    const officialNameInput = document.getElementById('official-name');
+    const officialRoleInput = document.getElementById('official-role');
+    const officialContactInput = document.getElementById('official-contact');
+
+    const membersList = document.getElementById('members-list');
+    const membersForm = document.getElementById('members-form');
+    const memberNameInput = document.getElementById('member-name');
+    const memberContactInput = document.getElementById('member-contact');
+    const memberStatusSelect = document.getElementById('member-status');
+
+    // Members dropdown elements
+    const membersDropdown = document.querySelector('.members-dropdown');
+    const membersDropdownButton = document.querySelector('.members-dropdown-button');
+    const membersDropdownContent = document.querySelector('.members-dropdown-content');
+
+    // Modal elements
+    const editModal = document.getElementById('edit-modal');
+    const editForm = document.getElementById('edit-form');
+    const editCancelBtn = document.getElementById('edit-cancel-btn');
+    const editModalTitle = document.getElementById('edit-modal-title');
+
+    // Data structures: { communityId: [items...] }
+    let officialsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.officials)) || {};
+    let membersData = JSON.parse(localStorage.getItem(STORAGE_KEYS.members)) || {};
+
+    // Current selected community id
+    let currentCommunityId = fixedCommunities[0].id;
+
+    // Currently editing item info
+    let editingItem = null;
+    let editingType = null; // 'official' or 'member'
+
+    // Initialize community selector
+    function populateCommunitySelector() {
+      communitySelect.innerHTML = '';
+      fixedCommunities.forEach(c => {
+        const option = document.createElement('option');
+        option.value = c.id;
+        option.textContent = c.name;
+        communitySelect.appendChild(option);
+      });
+      communitySelect.value = currentCommunityId;
+    }
+
+    // Display selected community info
+    function displayCommunityInfo() {
+      const community = fixedCommunities.find(c => c.id === currentCommunityId);
+      if (!community) return;
+      communityNameDisplay.textContent = community.name;
+      communityLocationDisplay.textContent = community.location || 'Not specified';
+      const membersCount = (membersData[currentCommunityId]?.length) || 0;
+      communityMembersCount.textContent = membersCount;
+      totalMembersCount.textContent = getTotalMembersCount();
+    }
+
+    // Calculate total members across all communities
+    function getTotalMembersCount() {
+      return Object.values(membersData).reduce((acc, arr) => acc + arr.length, 0);
+    }
+
+    // Save data to localStorage
+    function saveData() {
+      localStorage.setItem(STORAGE_KEYS.officials, JSON.stringify(officialsData));
+      localStorage.setItem(STORAGE_KEYS.members, JSON.stringify(membersData));
+    }
+
+    // Render officials list
+    function renderOfficials() {
+      officialsList.innerHTML = '';
+      const officials = officialsData[currentCommunityId] || [];
+      if (officials.length === 0) {
+        officialsList.innerHTML = '<li style="color:#999;font-style:italic;">No officials added yet.</li>';
+        return;
+      }
+      officials.forEach((official, i) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <div class="list-item-info">
+            <strong>${official.name}</strong> - ${official.role} <br />
+            <small>Contact: ${official.contact || 'N/A'}</small>
+          </div>
+          <div class="list-item-actions">
+            <button class="action-btn edit" aria-label="Edit official ${official.name}" title="Edit">✏️</button>
+            <button class="action-btn delete delete-btn" aria-label="Delete official ${official.name}" title="Delete">🗑️</button>
+          </div>
+        `;
+        li.querySelector('.edit').onclick = () => openEditModal('official', i);
+        li.querySelector('.delete-btn').onclick = () => {
+          if (confirm(`Delete official "${official.name}"?`)) {
+            officials.splice(i, 1);
+            saveData();
+            renderOfficials();
+          }
+        };
+        officialsList.appendChild(li);
+      });
+    }
+
+    // Render members list
+    function renderMembers() {
+      membersList.innerHTML = '';
+      const members = membersData[currentCommunityId] || [];
+      if (members.length === 0) {
+        membersList.innerHTML = '<li style="color:#999;font-style:italic;">No members added yet.</li>';
+        return;
+      }
+      members.forEach((member, i) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <div class="list-item-info">
+            <strong>${member.name}</strong> - ${member.status} <br />
+            <small>Contact: ${member.contact || 'N/A'}</small>
+          </div>
+          <div class="list-item-actions">
+            <button class="action-btn edit" aria-label="Edit member ${member.name}" title="Edit">✏️</button>
+            <button class="action-btn delete delete-btn" aria-label="Delete member ${member.name}" title="Delete">🗑️</button>
+          </div>
+        `;
+        li.querySelector('.edit').onclick = () => openEditModal('member', i);
+        li.querySelector('.delete-btn').onclick = () => {
+          if (confirm(`Delete member "${member.name}"?`)) {
+            members.splice(i, 1);
+            saveData();
+            renderMembers();
+            displayCommunityInfo(); // update member count
+            renderMembersDropdown();
+          }
+        };
+        membersList.appendChild(li);
+      });
+      displayCommunityInfo();
+    }
+
+    // Add official form submit
+    officialsForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const name = officialNameInput.value.trim();
+      const role = officialRoleInput.value.trim();
+      const contact = officialContactInput.value.trim();
+      if (!name || !role) {
+        alert('Please fill in name and role.');
+        return;
+      }
+      if (!officialsData[currentCommunityId]) officialsData[currentCommunityId] = [];
+      officialsData[currentCommunityId].push({ name, role, contact });
+      saveData();
+      renderOfficials();
+      officialsForm.reset();
+    });
+
+    // Add member form submit
+    membersForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const name = memberNameInput.value.trim();
+      const contact = memberContactInput.value.trim();
+      const status = memberStatusSelect.value;
+      if (!name || !status) {
+        alert('Please fill in name and select status.');
+        return;
+      }
+      if (!membersData[currentCommunityId]) membersData[currentCommunityId] = [];
+      membersData[currentCommunityId].push({ name, contact, status });
+      saveData();
+      renderMembers();
+      membersForm.reset();
+      renderMembersDropdown();
+    });
+
+    // Open edit modal for official or member
+    function openEditModal(type, index) {
+      editingType = type;
+      editingItem = index;
+      editForm.innerHTML = '';
+      if (type === 'official') {
+        editModalTitle.textContent = 'Edit Official';
+        const official = officialsData[currentCommunityId][index];
+        editForm.innerHTML = `
+          <label for="edit-name">Name</label>
+          <input type="text" id="edit-name" value="${official.name}" required />
+          <label for="edit-role">Role</label>
+          <input type="text" id="edit-role" value="${official.role}" required />
+          <label for="edit-contact">Contact Info</label>
+          <input type="text" id="edit-contact" value="${official.contact || ''}" />
+        `;
+      } else if (type === 'member') {
+        editModalTitle.textContent = 'Edit Member';
+        const member = membersData[currentCommunityId][index];
+        editForm.innerHTML = `
+          <label for="edit-name">Name</label>
+          <input type="text" id="edit-name" value="${member.name}" required />
+          <label for="edit-contact">Contact Info</label>
+          <input type="text" id="edit-contact" value="${member.contact || ''}" />
+          <label for="edit-status">Status</label>
+          <select id="edit-status" required>
+            <option value="">Select status</option>
+            <option value="Active" ${member.status === 'Active' ? 'selected' : ''}>Active</option>
+            <option value="Inactive" ${member.status === 'Inactive' ? 'selected' : ''}>Inactive</option>
+          </select>
+        `;
+      }
+      editModal.classList.add('active');
+      editModal.focus();
+    }
+
+    // Close modal
+    function closeEditModal() {
+      editingItem = null;
+      editingType = null;
+      editModal.classList.remove('active');
+      editForm.innerHTML = '';
+    }
+    editCancelBtn.addEventListener('click', closeEditModal);
+    editModal.addEventListener('click', e => {
+      if (e.target === editModal) closeEditModal();
+    });
+
+    // Handle edit form submit
+    editForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const name = document.getElementById('edit-name').value.trim();
+      if (!name) {
+        alert('Name is required.');
+        return;
+      }
+      if (editingType === 'official') {
+        const role = document.getElementById('edit-role').value.trim();
+        if (!role) {
+          alert('Role is required.');
+          return;
+        }
+        const contact = document.getElementById('edit-contact').value.trim();
+        officialsData[currentCommunityId][editingItem] = { name, role, contact };
+        saveData();
+        renderOfficials();
+      } else if (editingType === 'member') {
+        const contact = document.getElementById('edit-contact').value.trim();
+        const status = document.getElementById('edit-status').value;
+        if (!status) {
+          alert('Status is required.');
+          return;
+        }
+        membersData[currentCommunityId][editingItem] = { name, contact, status };
+        saveData();
+        renderMembers();
+        displayCommunityInfo();
+        renderMembersDropdown();
+      }
+      closeEditModal();
+    });
+
+    // Handle community selection change
+    communitySelect.addEventListener('change', () => {
+      currentCommunityId = communitySelect.value;
+      displayCommunityInfo();
+      renderOfficials();
+      renderMembers();
+    });
+
+    // Render members dropdown content
+    function renderMembersDropdown() {
+      membersDropdownContent.innerHTML = '';
+      const totalMembers = getTotalMembersCount();
+      if (totalMembers === 0) {
+        membersDropdownContent.innerHTML = '<p style="padding:0.5rem 1rem; color:#999; font-style:italic;">No members available.</p>';
+        return;
+      }
+      fixedCommunities.forEach(community => {
+        const members = membersData[community.id] || [];
+        if (members.length === 0) return;
+        const header = document.createElement('h4');
+        header.textContent = community.name;
+        membersDropdownContent.appendChild(header);
+        members.forEach(member => {
+          const div = document.createElement('div');
+          div.className = 'member-item';
+          div.tabIndex = 0;
+          div.textContent = `${member.name} (${member.status})`;
+          div.title = `Contact: ${member.contact || 'N/A'}`;
+          div.addEventListener('click', () => {
+            alert(`Name: ${member.name}\nStatus: ${member.status}\nContact: ${member.contact || 'N/A'}\nCommunity: ${community.name}`);
+          });
+          div.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              div.click();
+            }
+          });
+          membersDropdownContent.appendChild(div);
+        });
+      });
+    }
+
+    // Toggle members dropdown on button click
+    membersDropdownButton.addEventListener('click', () => {
+      const expanded = membersDropdown.getAttribute('aria-expanded') === 'true';
+      if (expanded) {
+        membersDropdownContent.classList.remove('active');
+        membersDropdown.setAttribute('aria-expanded', 'false');
+      } else {
+        renderMembersDropdown();
+        membersDropdownContent.classList.add('active');
+        membersDropdown.setAttribute('aria-expanded', 'true');
+      }
+    });
+
+    // Close dropdown if clicked outside
+    document.addEventListener('click', e => {
+      if (!membersDropdown.contains(e.target)) {
+        membersDropdownContent.classList.remove('active');
+        membersDropdown.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    // Calculate total members across all communities
+    function getTotalMembersCount() {
+      return Object.values(membersData).reduce((acc, arr) => acc + arr.length, 0);
+    }
+
+    // Initialize page
+    function init() {
+      populateCommunitySelector();
+      displayCommunityInfo();
+      renderOfficials();
+      renderMembers();
+    }
+
+    init();
+  </script>
+</body>
+</html>
