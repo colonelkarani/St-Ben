@@ -403,29 +403,29 @@
             </div>
             
             <div class="form-container slide-up">
-                <form id="membership-form">
+                <form id="membership-form" method="post" action="/api/membership-form">
                     <div class="input-group">
-                        <input type="text" id="name" placeholder=" " required>
+                        <input type="text" id="name" name="name" placeholder=" " required>
                         <label for="name">Full Name</label>
                     </div>
                     
                     <div class="input-group">
-                        <input type="email" id="email" placeholder=" " required>
+                        <input type="email" id="email" name="email" placeholder=" " required>
                         <label for="email">Email Address</label>
                     </div>
                     
                     <div class="input-group">
-                        <input type="tel" id="phone" placeholder=" " required>
+                        <input type="tel" id="phone" name="phone" placeholder=" " required>
                         <label for="phone">Phone Number</label>
                     </div>
                     
                     <div class="input-group">
-                        <input type="text" id="address" placeholder=" ">
+                        <input type="text" id="address" name="address" placeholder=" ">
                         <label for="address">Address</label>
                     </div>
                     
                     <div class="input-group select-wrapper">
-                        <select id="membership-type" required>
+                        <select id="membership-type" name="membership-type" required>
                             <option value="" disabled selected></option>
                             <option value="individual">Individual</option>
                             <option value="family">Family</option>
@@ -474,7 +474,7 @@
         
         // Form submission handling
         document.getElementById('membership-form').addEventListener('submit', function(e) {
-            e.preventDefault();
+            
             
             // Simulate form submission
             setTimeout(() => {

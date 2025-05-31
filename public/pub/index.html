@@ -1436,8 +1436,8 @@ footer {
            <section class="newsletter">
             <h2>Stay Updated</h2>
             <p>Sign up for our weekly newsletter to receive updates about upcoming events, service times, and announcements.</p>
-            <form class="newsletter-form">
-                <input type="email" placeholder="Your email address" required>
+            <form class="newsletter-form" action="/api/subscribe" method="post">
+                <input type="email" name="email" placeholder="Your email address" required>
                 <button type="submit">Subscribe</button>
             </form>
             <div class="church-name">St Bernadette Church</div>
