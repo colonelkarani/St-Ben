@@ -2,7 +2,7 @@ const { ifError } = require('assert')
 const express = require('express')
 const fs = require('fs')
 const app = express()
-const port = 3030
+const port = 80
 app.use(express.urlencoded({extended: true}))
 app.use(express.static('pub'))
 
