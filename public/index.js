@@ -25,7 +25,9 @@ app.post('/api/subscribe', (req,res)=>{
         if (err) {
            console.log('error subscribing');           
         } else {
-            console.log('subscriber listed');            
+            console.log('subscriber listed');    
+	console.log('Form data received:', req.body  , '\n', `request is from ${req.ip}`); 
+
         }
     })
     res.redirect('/') 
