@@ -31,6 +31,8 @@ app.post('/api/subscribe', (req,res)=>{
     res.redirect('/') 
 })
 
+
+
 app.post('/api/membership-form', (req,res)=>{
     fs.appendFile('new-members.json', JSON.stringify(req.body), (err)=>{
         if (err) {

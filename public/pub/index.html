@@ -1288,7 +1288,7 @@ footer {
                     <a href="index.html" class="nav-link active">Home</a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a href="visit.html" class="nav-link dropdown-toggle">
+                    <a href="#" class="nav-link dropdown-toggle">
                         Visit <span class="dropdown-chevron"><i class="fas fa-chevron-down"></i></span>
                     </a>
                     <div class="dropdown-menu">
@@ -1297,7 +1297,7 @@ footer {
                         <a href="join.html" class="dropdown-item">Join</a>
                         <a href="prayerrequest.html" class="dropdown-item">Prayer Request</a>
                         <a href="history.html" class="dropdown-item">History</a>
-                        <a href="#" class="dropdown-item">Get Updates</a>
+                        <a href="#newsletter" class="dropdown-item">Get Updates</a>
 
                     </div>
                 </li>
@@ -1433,7 +1433,7 @@ footer {
 </div>
            </div>
 <div class="NEWSLETTER">
-           <section class="newsletter">
+           <section class="newsletter" id="newsletter">
             <h2>Stay Updated</h2>
             <p>Sign up for our weekly newsletter to receive updates about upcoming events, service times, and announcements.</p>
             <form class="newsletter-form" action="/api/subscribe" method="post">
@@ -1742,11 +1742,11 @@ footer {
   <script >
 // Events data - normally this would come from a database
 const events = {
-    "2025-05-05": { title: "Team Meeting", time: "10:00 AM", description: "Discuss quarterly goals and project timelines" },
-    "2025-05-10": { title: "Product Launch", time: "2:00 PM", description: "Release of new product line with press conference" },
-    "2025-05-15": { title: "Client Presentation", time: "11:30 AM", description: "Present project progress to key stakeholders" },
-    "2025-05-20": { title: "Training Workshop", time: "9:00 AM - 4:00 PM", description: "Full-day training on new software implementation" },
-    "2025-05-25": { title: "Board Meeting", time: "3:00 PM", description: "Monthly review with board of directors" },
+    "2025-06-05": { title: "Team Meeting", time: "10:00 AM", description: "Discuss quarterly goals and project timelines" },
+    "2025-06-10": { title: "Product Launch", time: "2:00 PM", description: "Release of new product line with press conference" },
+    "2025-06-15": { title: "Client Presentation", time: "11:30 AM", description: "Present project progress to key stakeholders" },
+    "2025-06-20": { title: "Training Workshop", time: "9:00 AM - 4:00 PM", description: "Full-day training on new software implementation" },
+    "2025-06-25": { title: "Board Meeting", time: "3:00 PM", description: "Monthly review with board of directors" },
     "2025-06-02": { title: "Conference", time: "All Day", description: "Annual industry conference in Chicago" },
     "2025-06-15": { title: "Team Building", time: "2:00 PM", description: "Afternoon team building activities and dinner" },
     "2025-06-22": { title: "Project Deadline", time: "5:00 PM", description: "Final submission for Q2 project deliverables" },
@@ -1756,7 +1756,7 @@ const events = {
 
 // Calendar state
 let currentDate = new Date();
-let currentMonth = 4; // Start with May (month is 0-indexed in JavaScript)
+let currentMonth = new Date().getMonth()
 let currentYear = 2025;
 
 // DOM elements
